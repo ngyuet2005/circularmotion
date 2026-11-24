@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>圓周運動 Circular Motion</title>
+<style>
+/*
+VOICE: bright classroom board, large type, one idea per page, nothing decorative.
+IDEA: a physics demo bench; every page has a live apparatus beside the notes.
+PICTURE: a ball whirled on a string with colour-coded vectors (v blue, a red, F purple).
+COLOUR and TYPE: white ground, sky-blue figure panels, sunny yellow key formulas; Times New Roman + 新細明體, TeX maths via MathJax.
+LAYOUT: one slide per screen (scroll-snap deck), notes left / live figure right, nav bar at the foot.
+*/
+:root{color-scheme:light;--z:1;--bar:clamp(54px,7vh,76px);--ink:#0f172a;--ink2:#475569;--sky:#eaf4ff;--sun:#fff3c4;--blue:#1d4ed8;--red:#e11d48;--purple:#7c3aed;--orange:#ea580c;--green:#059669;--line:#cbd5e1}
+*{box-sizing:border-box;min-width:0}
+html{font-size:calc(clamp(15px,min(1.38vw,2.5vh),40px)*var(--z))}
+body{margin:0;background:#fff;color:var(--ink);font-family:"Times New Roman",Times,"PMingLiU","新細明體","MingLiU","細明體","Songti TC","LiSong Pro","Noto Serif TC",serif;line-height:1.5;overflow:hidden}
+.deck{display:flex;height:calc(100vh - var(--bar));height:calc(100dvh - var(--bar));overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none}
+.deck::-webkit-scrollbar{display:none}
+.slide{flex:0 0 100%;height:100%;overflow-y:auto;scroll-snap-align:start;scroll-snap-stop:always;padding:1.3rem clamp(1rem,3.5vw,4rem)}
+.inner{max-width:80rem;margin:0 auto;min-height:100%;display:flex;flex-direction:column;justify-content:center;gap:.4rem}
+h1{font-size:3.8rem;line-height:1.05;margin:.2rem 0 1rem;color:var(--blue)}
+h2{font-size:2.1rem;line-height:1.1;margin:0 0 .5rem;text-wrap:balance}
+h3{font-size:1.2rem;margin:.1rem 0 .3rem}
+.g2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(1rem,2.5vw,3rem);align-items:center}
+.g2.wide{grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr)}
+.g2.top{align-items:start}
+p{margin:.4rem 0}
+ul,ol{margin:.3rem 0;padding-left:1.4em}li{margin:.35rem 0}
+.eq{font-size:1.5rem;text-align:center;background:var(--sun);border-radius:1rem;padding:.6rem 1rem;margin:.5rem 0}
+.eq.xl{font-size:2rem}
+.box{background:var(--sky);border-radius:1rem;padding:.7rem 1.1rem;margin:.45rem 0}
+.box.warn{background:#ffe4ea}.box.good{background:#dcfce7}.box.sun{background:var(--sun)}
+.fig{background:var(--sky);border-radius:1.2rem;padding:.5rem}
+.fig>svg{display:block;width:100%;height:auto;max-height:calc(100dvh - var(--bar) - 12rem);margin:auto}
+.cap{font-size:.8rem;color:var(--ink2);margin:.35rem .4rem 0}
+.v{color:var(--blue)}.a{color:var(--red)}.f{color:var(--purple)}.o{color:var(--orange)}
+.small{font-size:.85rem;color:var(--ink2)}
+.kicker{font-size:1.15rem;color:var(--ink2);margin:0}
+html[data-lang=zh] .en,html[data-lang=en] .zh{display:none!important}
+html[data-lang=both] .en{display:block;font-size:.8em;color:var(--ink2);line-height:1.35;margin-top:.1em}
+html[data-lang=both] h1 .en{font-size:.5em;color:var(--ink)}
+html[data-lang=both] h2 .en{font-size:.6em;color:var(--ink)}
+html[data-lang=both] .il .en{display:inline;font-size:.85em;margin:0}
+html[data-lang=both] .il .en::before{content:" / ";color:#94a3b8}
+.btn{font:inherit;font-size:.85rem;min-height:44px;padding:.3rem 1rem;border-radius:999px;border:2px solid var(--blue);background:#fff;color:var(--blue);cursor:pointer}
+.btn:hover{background:#eff6ff}.btn.solid{background:var(--blue);color:#fff}.btn.red{border-color:var(--red);color:var(--red)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #f59e0b;outline-offset:2px}
+.ans{margin-top:.4rem;padding:.5rem .9rem;background:#fff;border-radius:.8rem;border:2px dashed var(--green)}
+.ex{background:#fff;border:2px solid var(--line);border-radius:1rem;padding:.6rem 1rem;margin:.45rem 0}
+.ex .btn{margin-top:.3rem}
+.ctrls{display:grid;gap:.35rem;margin:.5rem 0}
+.sl{display:grid;grid-template-columns:auto minmax(0,1fr) 3.4rem;align-items:center;gap:.7rem;font-size:1.05rem}
+.sl input{width:100%;accent-color:var(--blue);height:2rem}
+.sl output{text-align:right;font-variant-numeric:tabular-nums}
+.row{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.35rem 0}
+.ro{font-size:1.2rem;min-height:1.9em}
+.ck{display:inline-flex;align-items:center;gap:.4rem;min-height:44px;margin-right:1rem;cursor:pointer}
+.ck input{width:1.2rem;height:1.2rem;accent-color:var(--blue)}
+table.t{border-collapse:collapse;width:100%;font-size:1.05rem;background:#fff}
+.t th,.t td{border:1px solid var(--line);padding:.4rem .6rem;text-align:center}
+.t th{background:#f1f5f9;font-weight:700}
+td.hid{cursor:pointer;background:#fefce8}td.hid .r{visibility:hidden}td.hid.shown{background:#fff}td.hid.shown .r{visibility:visible}
+.conv input{font:inherit;font-size:1.1rem;width:7rem;min-height:44px;padding:.2rem .5rem;border:2px solid var(--line);border-radius:.6rem}
+.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1rem;margin:.4rem 0}
+.card{background:#fff;border:2px solid var(--line);border-radius:1rem;padding:.7rem;text-align:center}
+.card>svg{width:100%;height:auto;max-height:8rem;background:var(--sky);border-radius:.7rem}
+.card b{display:block;font-size:1.15rem;margin-top:.3rem}
+.card p{font-size:.9rem}
+.qq{font-size:1.5rem;margin:.3rem 0 .8rem}
+.opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.8rem}
+.opt{font:inherit;font-size:1.2rem;text-align:left;padding:.7rem 1.1rem;min-height:44px;border-radius:1rem;border:2px solid var(--line);background:#fff;color:var(--ink);cursor:pointer}
+.opt:hover{border-color:var(--blue)}.opt.right{border-color:var(--green);background:#dcfce7}.opt.wrong{border-color:var(--red);background:#ffe4ea}
+.qn{color:var(--ink2);margin:0}
+.sum{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.8rem}
+.sum .box{margin:0;font-size:1.15rem}
+.sum h3{color:var(--blue)}
+.goals li{font-size:1.15rem}
+.sec{font-size:.95rem;font-weight:700;color:var(--blue);margin:0}
+.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.6rem 1rem}.g3 .ex{margin:0;font-size:1.15rem}
+.part{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem .8rem;margin:.35rem 0}.part .ans{flex-basis:100%;margin-top:0}
+.btn.sm{min-height:38px;font-size:.75rem;padding:.15rem .8rem}
+.dse{background:#fff;border:2px solid var(--blue);border-radius:1rem;padding:.7rem 1.1rem;margin:.45rem 0}
+.dse h3{color:var(--blue)}
+.mini{display:block;width:100%;max-width:17rem;height:auto;margin:.3rem auto;background:var(--sky);border-radius:.8rem}
+.bar{position:fixed;left:0;right:0;bottom:0;height:var(--bar);display:flex;align-items:center;gap:.5rem;padding:0 .8rem;background:#fff;border-top:1px solid #e2e8f0;font-size:clamp(14px,1.9vh,20px);z-index:5}
+.prog{position:absolute;left:0;top:-2px;height:4px;width:0;background:var(--blue);transition:width .3s}
+.ib{font:inherit;min-width:44px;min-height:44px;padding:0 .6rem;border-radius:.7rem;border:1.5px solid var(--line);background:#fff;color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+.ib>svg{width:1.2em;height:1.2em}
+#jump{font:inherit;min-height:44px;max-width:18rem;border-radius:.7rem;border:1.5px solid var(--line);padding:0 .5rem;background:#fff;color:var(--ink)}
+#count{font-variant-numeric:tabular-nums;color:var(--ink2);white-space:nowrap}
+.sp{flex:1}
+.seg{display:inline-flex;border:1.5px solid var(--blue);border-radius:999px;overflow:hidden}
+.seg button{font:inherit;min-height:42px;padding:0 .8rem;border:0;background:#fff;color:var(--blue);cursor:pointer;white-space:nowrap}
+.seg button[aria-pressed=true]{background:var(--blue);color:#fff}
+@media(max-width:900px){.g2,.g2.wide{grid-template-columns:minmax(0,1fr)}.g3{grid-template-columns:repeat(2,minmax(0,1fr))}.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.sum{grid-template-columns:minmax(0,1fr)}.fig svg{max-height:none}h1{font-size:2.8rem}}
+@media(max-width:600px){.opts{grid-template-columns:minmax(0,1fr)}#jump,#count{display:none}.bar{gap:.3rem;padding:0 .4rem}.seg button{padding:0 .5rem}}
+</style>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg:{fontCache:'local'},
+startup:{ready(){MathJax.startup.defaultReady();MathJax.startup.promise.then(()=>{window.__start&&window.__start()})}}};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js"></script>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<marker id="h-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0,0L10,5L0,10z" fill="#1d4ed8"/></marker>
+<marker id="h-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0,0L10,5L0,10z" fill="#e11d48"/></marker>
+<marker id="h-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0,0L10,5L0,10z" fill="#7c3aed"/></marker>
+<marker id="h-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0,0L10,5L0,10z" fill="#ea580c"/></marker>
+</defs></svg>
+
+<main class="deck" id="deck">
+
+<!-- 0 Title -->
+<section class="slide" data-zh="封面" data-en="Title"><div class="inner"><div class="g2">
+<div>
+<p class="kicker il"><span class="zh">物理科 · 中五 · 第一課</span><span class="en">Physics · S5 · Lesson 1</span></p>
+<h1><span class="zh">圓周運動</span><span class="en">Circular Motion</span></h1>
+<div class="box"><h3 class="il"><span class="zh">本課學習目標</span><span class="en">Learning objectives</span></h3>
+<ol class="goals">
+<li><span class="zh">角度的新單位：弧度（\(\mathrm{rad}\)）；角度、弧度與圈數換算</span><span class="en">A new unit of angle, the radian; converting degrees, radians and revolutions</span></li>
+<li><span class="zh">角速率 \(\omega\)、週期 \(T\)、頻率 \(f\)；線性速率 \(v=r\omega\)</span><span class="en">Angular speed \(\omega\), period \(T\), frequency \(f\); linear speed \(v=r\omega\)</span></li>
+<li><span class="zh">向心加速度 \(a_c=\dfrac{v^2}{r}\) 與向心力 \(F_c=\dfrac{mv^2}{r}\)；DSE 題型</span><span class="en">Centripetal acceleration \(a_c=\dfrac{v^2}{r}\) and force \(F_c=\dfrac{mv^2}{r}\); DSE questions</span></li>
+</ol></div>
+<p class="small"><span class="zh">按 → 或空白鍵翻頁；按 L 切換語言；按 F 全螢幕</span><span class="en">Press → or Space for the next page; L to switch language; F for full screen</span></p>
+</div>
+<div class="fig"><svg id="f0" viewBox="0 0 600 520" role="img" aria-label="Ball in circular motion"></svg></div>
+</div></div></section>
+
+<!-- 1 Radian -->
+<section class="slide" data-zh="弧度的定義" data-en="The radian"><div class="inner">
+<p class="sec il"><span class="zh">一、角度的新單位：弧度</span><span class="en">Part 1 · A new unit of angle: the radian</span></p>
+
+<h2><span class="zh">弧度的定義</span><span class="en">What is a radian?</span></h2>
+<div class="g2">
+<div>
+<p><span class="zh">在半徑為 \(r\) 的圓周上，弧長 \(s\) 與半徑 \(r\) 之比定義為圓心角 \(\theta\)，單位是<b>弧度</b>（radian, \(\mathrm{rad}\)）：</span><span class="en">On a circle of radius \(r\), the angle \(\theta\) subtended at the centre by an arc of length \(s\) can be measured in <b>radians</b>, defined as:</span></p>
+<div class="eq xl">\(\theta=\dfrac{s}{r}\quad\Longrightarrow\quad s=r\theta\)</div>
+<div class="box sun"><span class="zh">當弧長等於半徑（\(s=r\)）時，圓心角 \(\theta=1\ \mathrm{rad}\)。</span><span class="en">When the arc length equals the radius (\(s=r\)), the angle is \(\theta=1\ \mathrm{rad}\).</span></div>
+<p class="small"><span class="zh">弧度是兩個長度的比值，所以沒有量綱；單位記作 \(\mathrm{rad}\)。</span><span class="en">A radian is a ratio of two lengths, so it is dimensionless; its unit is written \(\mathrm{rad}\).</span></p>
+<div class="ro" id="ro1a"></div><div class="ro" id="ro1b"></div>
+</div>
+<div>
+<div class="fig"><svg id="f1" viewBox="0 0 600 560" role="img" aria-label="Arc length and angle"></svg></div>
+<div class="ctrls">
+<label class="sl"><span>\(\theta\)</span><input type="range" id="th" min="0" max="360" step="0.1" value="60"><output id="thv">60°</output></label>
+<div class="row"><button class="btn" data-deg="57.29578">\(1\ \mathrm{rad}\)</button><button class="btn" data-deg="90">\(\tfrac{\pi}{2}\)</button><button class="btn" data-deg="180">\(\pi\)</button><button class="btn" data-deg="360">\(2\pi\)</button></div>
+</div>
+</div>
+</div></div></section>
+
+<!-- 2 Conversion -->
+<section class="slide" data-zh="角度與弧度換算" data-en="Degrees ⇄ radians"><div class="inner">
+<p class="sec il"><span class="zh">一、角度的新單位：弧度</span><span class="en">Part 1 · A new unit of angle: the radian</span></p>
+
+<h2><span class="zh">角度 ⇄ 弧度</span><span class="en">Degrees ⇄ radians</span></h2>
+<div class="g2 top">
+<div>
+<p><span class="zh">轉一整圈時，弧長就是圓周 \(s=2\pi r\)：</span><span class="en">In one full turn the arc is the whole circumference, \(s=2\pi r\):</span></p>
+<div class="eq">\(\theta=\dfrac{2\pi r}{r}=2\pi\ \mathrm{rad}=360^\circ\)</div>
+<div class="eq">\(\pi\ \mathrm{rad}=180^\circ\qquad 1\ \mathrm{rad}=\dfrac{180^\circ}{\pi}\approx57.3^\circ\)</div>
+<div class="box"><h3 class="il"><span class="zh">角度 → 弧度</span><span class="en">Degrees → radians</span></h3>\(\theta_{\text{rad}}=\theta_{\text{deg}}\times\dfrac{\pi}{180^\circ}\)</div>
+<div class="box"><h3 class="il"><span class="zh">弧度 → 角度</span><span class="en">Radians → degrees</span></h3>\(\theta_{\text{deg}}=\theta_{\text{rad}}\times\dfrac{180^\circ}{\pi}\)</div>
+<div class="box"><h3 class="il"><span class="zh">圈數 → 弧度</span><span class="en">Revolutions → radians</span></h3>\(\theta_{\text{rad}}=n\times2\pi\qquad(1\ \mathrm{rev}=2\pi\ \mathrm{rad})\)</div>
+</div>
+<div>
+<p class="small"><span class="zh">點擊黃色格子顯示答案</span><span class="en">Click a yellow cell to reveal the answer</span></p>
+<table class="t" id="angT">
+<tr><th class="il"><span class="zh">角度</span><span class="en">Degrees</span></th><td>\(30^\circ\)</td><td>\(45^\circ\)</td><td>\(60^\circ\)</td><td>\(90^\circ\)</td></tr>
+<tr><th class="il"><span class="zh">弧度</span><span class="en">Radians</span></th><td class="hid"><span class="r">\(\tfrac{\pi}{6}\)</span></td><td class="hid"><span class="r">\(\tfrac{\pi}{4}\)</span></td><td class="hid"><span class="r">\(\tfrac{\pi}{3}\)</span></td><td class="hid"><span class="r">\(\tfrac{\pi}{2}\)</span></td></tr>
+<tr><th class="il"><span class="zh">角度</span><span class="en">Degrees</span></th><td>\(120^\circ\)</td><td>\(180^\circ\)</td><td>\(270^\circ\)</td><td>\(360^\circ\)</td></tr>
+<tr><th class="il"><span class="zh">弧度</span><span class="en">Radians</span></th><td class="hid"><span class="r">\(\tfrac{2\pi}{3}\)</span></td><td class="hid"><span class="r">\(\pi\)</span></td><td class="hid"><span class="r">\(\tfrac{3\pi}{2}\)</span></td><td class="hid"><span class="r">\(2\pi\)</span></td></tr>
+</table>
+<div class="row"><button class="btn il" id="revAll"><span class="zh">全部顯示 / 隱藏</span><span class="en">Show / hide all</span></button></div>
+<div class="box conv">
+<h3 class="il"><span class="zh">換算器</span><span class="en">Converter</span></h3>
+<div class="row">\(\theta_{\text{deg}}=\)<input id="dIn" type="number" value="75" step="any" aria-label="degrees">\(^\circ\)</div>
+<div class="ro" id="dOut"></div>
+<div class="row">\(\theta_{\text{rad}}=\)<input id="rIn" type="number" value="2.5" step="any" aria-label="radians">\(\mathrm{rad}\)</div>
+<div class="ro" id="rOut"></div>
+<div class="row">\(n=\)<input id="nIn" type="number" value="3" step="any" aria-label="revolutions">\(\mathrm{rev}\)</div>
+<div class="ro" id="nOut"></div>
+</div>
+</div>
+</div></div></section>
+
+<!-- Warm-up 1 -->
+<section class="slide" data-zh="熱身練習 1" data-en="Warm-up 1"><div class="inner">
+<p class="sec il"><span class="zh">一、角度的新單位：弧度</span><span class="en">Part 1 · A new unit of angle: the radian</span></p>
+<h2><span class="zh">熱身練習 1：角度、弧度與圈數換算</span><span class="en">Warm-up 1: degrees, radians and revolutions</span></h2>
+<p class="small"><span class="zh">計算題請保留三位有效數字或以 \(\pi\) 表示</span><span class="en">Give answers to 3 significant figures or in terms of \(\pi\)</span></p>
+<div class="g3">
+<div class="ex"><b>(a)</b> \(90^\circ=\underline{\qquad\quad}\ \mathrm{rad}\) <button class="btn sm rv il"><span class="zh">答案</span><span class="en">Answer</span></button><div class="ans" hidden>\(\dfrac{\pi}{2}\ \mathrm{rad}\ (\approx1.57\ \mathrm{rad})\)</div></div>
+<div class="ex"><b>(b)</b> \(60^\circ=\underline{\qquad\quad}\ \mathrm{rad}\) <button class="btn sm rv il"><span class="zh">答案</span><span class="en">Answer</span></button><div class="ans" hidden>\(\dfrac{\pi}{3}\ \mathrm{rad}\ (\approx1.05\ \mathrm{rad})\)</div></div>
+<div class="ex"><b>(c)</b> \(\dfrac{3\pi}{2}\ \mathrm{rad}=\underline{\qquad\quad}^\circ\) <button class="btn sm rv il"><span class="zh">答案</span><span class="en">Answer</span></button><div class="ans" hidden>\(270^\circ\)</div></div>
+<div class="ex"><b>(d)</b> \(2.5\ \mathrm{rad}=\underline{\qquad\quad}^\circ\) <button class="btn sm rv il"><span class="zh">答案</span><span class="en">Answer</span></button><div class="ans" hidden>\(2.5\times\dfrac{180^\circ}{\pi}\approx143^\circ\)</div></div>
+<div class="ex"><b>(e)</b> <span class="zh">\(3\) 圈 \(=\underline{\qquad\quad}\ \mathrm{rad}\)</span><span class="en">\(3\ \mathrm{rev}=\underline{\qquad\quad}\ \mathrm{rad}\)</span> <button class="btn sm rv il"><span class="zh">答案</span><span class="en">Answer</span></button><div class="ans" hidden>\(3\times2\pi=6\pi\ \mathrm{rad}\ (\approx18.8\ \mathrm{rad})\)</div></div>
+<div class="ex"><b>(f)</b> <span class="zh">\(10\ \mathrm{rad}=\underline{\qquad\quad}\) 圈</span><span class="en">\(10\ \mathrm{rad}=\underline{\qquad\quad}\ \mathrm{rev}\)</span> <button class="btn sm rv il"><span class="zh">答案</span><span class="en">Answer</span></button><div class="ans" hidden><span class="zh">\(\dfrac{10}{2\pi}\approx1.59\) 圈</span><span class="en">\(\dfrac{10}{2\pi}\approx1.59\ \mathrm{rev}\)</span></div></div>
+</div>
+<div class="dse"><h3 class="il"><span class="zh">DSE 實戰：2019 卷一乙 Q4(a)(i) 節錄</span><span class="en">DSE practice: 2019 Paper 1B Q4(a)(i) (extract)</span></h3>
+<p><span class="zh">一質量為 \(30\ \mathrm{g}\) 的擺錘，以長度為 \(1\ \mathrm{m}\) 的不可伸長輕繩繫至固定點 \(O\)，並使其以 \(5.0\ \mathrm{rad\,s^{-1}}\) 的角速度沿水平圓形勻速旋轉。</span><span class="en">A \(30\ \mathrm{g}\) bob is tied to a fixed point \(O\) by a light inextensible string of length \(1\ \mathrm{m}\) and made to rotate uniformly in a horizontal circle with angular velocity \(5.0\ \mathrm{rad\,s^{-1}}\).</span></p>
+<div class="part"><b>(i)</b> <span class="zh">擺錘的旋轉率（以每秒圈數表達）是多少？（1 分）</span><span class="en">What is the rate of rotation of the bob in revolutions per second? (1 mark)</span> <button class="btn sm rv il"><span class="zh">答案</span><span class="en">Answer</span></button><div class="ans" hidden><span class="zh">旋轉率 \(=\dfrac{5.0}{2\pi}=0.796\ \mathrm{rev\,s^{-1}}\)　(1A)</span><span class="en">Rate of rotation \(=\dfrac{5.0}{2\pi}=0.796\ \mathrm{rev\,s^{-1}}\)　(1A)</span></div></div>
+</div>
+<div class="row"><button class="btn revS il"><span class="zh">全部答案</span><span class="en">All answers</span></button></div>
+</div></section>
+<!-- 3 Angular speed -->
+<section class="slide" data-zh="角速率" data-en="Angular speed"><div class="inner">
+<p class="sec il"><span class="zh">二、角速率、線性速率與公式推導</span><span class="en">Part 2 · Angular speed, linear speed and derivations</span></p>
+
+<h2><span class="zh">角速率</span><span class="en">Angular speed</span></h2>
+<div class="g2">
+<div>
+<p><span class="zh">角速率 \(\omega\)（omega）是<b>每單位時間轉過的角位移</b> \(\theta\)：</span><span class="en">Angular speed \(\omega\) (omega) is the <b>angular displacement \(\theta\) turned through per unit time</b>:</span></p>
+<div class="eq xl">\(\omega=\dfrac{\theta}{t}\)</div>
+<div class="box"><span class="zh">單位：\(\mathrm{rad\,s^{-1}}\)（弧度每秒）</span><span class="en">Unit: \(\mathrm{rad\,s^{-1}}\) (radians per second)</span></div>
+<div class="box sun"><span class="zh">計算時 \(\theta\) 必須以<b>弧度</b>為單位！</span><span class="en">\(\theta\) must be in <b>radians</b>!</span></div>
+<p><span class="zh">勻速圓周運動中，\(\omega\) 保持不變。</span><span class="en">In uniform circular motion, \(\omega\) is constant.</span></p>
+<div class="ro" id="ro3a"></div><div class="ro" id="ro3b"></div>
+</div>
+<div>
+<div class="fig"><svg id="f3" viewBox="0 0 600 560" role="img" aria-label="Rotating arm"></svg></div>
+<div class="ctrls"><label class="sl"><span>\(\omega\)</span><input type="range" id="w3" min="0.2" max="3" step="0.1" value="1"><output id="w3v">1.0</output></label></div>
+<p class="cap"><span class="zh">淺橙色扇形 = 過去 \(1\ \mathrm{s}\) 內轉過的角度，數值上等於 \(\omega\)。</span><span class="en">Shaded sector = angle swept in the last \(1\ \mathrm{s}\), numerically equal to \(\omega\).</span></p>
+</div>
+</div></div></section>
+
+<!-- 4 Examples + T, f -->
+<section class="slide" data-zh="角速率例子" data-en="Angular speed: examples"><div class="inner">
+<p class="sec il"><span class="zh">二、角速率、線性速率與公式推導</span><span class="en">Part 2 · Angular speed, linear speed and derivations</span></p>
+
+<h2><span class="zh">角速率：例子</span><span class="en">Angular speed: examples</span></h2>
+<div class="g2 top">
+<div>
+<div class="ex"><span class="zh"><b>例 1</b>　時鐘的秒針每 \(60\ \mathrm{s}\) 轉一圈。</span><span class="en"><b>Ex 1</b>　A clock's second hand turns once every \(60\ \mathrm{s}\).</span>
+<button class="btn rv il"><span class="zh">答案</span><span class="en">Answer</span></button><div class="ans" hidden>\(\omega=\dfrac{2\pi}{60}\approx0.105\ \mathrm{rad\,s^{-1}}\)</div></div>
+<div class="ex"><span class="zh"><b>例 2</b>　風扇每分鐘轉 \(300\) 圈。</span><span class="en"><b>Ex 2</b>　A fan turns at \(300\) revolutions per minute.</span>
+<button class="btn rv il"><span class="zh">答案</span><span class="en">Answer</span></button><div class="ans" hidden>\(\omega=\dfrac{300\times2\pi}{60}=10\pi\approx31.4\ \mathrm{rad\,s^{-1}}\)</div></div>
+<div class="ex"><span class="zh"><b>例 3</b>　地球每 \(24\ \mathrm{h}\) 自轉一圈。</span><span class="en"><b>Ex 3</b>　The Earth spins once every \(24\ \mathrm{h}\).</span>
+<button class="btn rv il"><span class="zh">答案</span><span class="en">Answer</span></button><div class="ans" hidden>\(\omega=\dfrac{2\pi}{24\times3600}\approx7.27\times10^{-5}\ \mathrm{rad\,s^{-1}}\)</div></div>
+<div class="ex"><span class="zh"><b>例 4</b>　一物體在 \(2\ \mathrm{s}\) 內轉過 \(90^\circ\)。</span><span class="en"><b>Ex 4</b>　An object turns through \(90^\circ\) in \(2\ \mathrm{s}\).</span>
+<button class="btn rv il"><span class="zh">答案</span><span class="en">Answer</span></button><div class="ans" hidden><span class="zh">先把 \(90^\circ\) 轉成 \(\tfrac{\pi}{2}\ \mathrm{rad}\)：</span><span class="en">First convert \(90^\circ\) to \(\tfrac{\pi}{2}\ \mathrm{rad}\):</span> \(\omega=\dfrac{\pi/2}{2}=\dfrac{\pi}{4}\approx0.785\ \mathrm{rad\,s^{-1}}\)</div></div>
+</div>
+<div class="box">
+<h3 class="il"><span class="zh">週期 \(T\) 與頻率 \(f\)</span><span class="en">Period \(T\) and frequency \(f\)</span></h3>
+<ul>
+<li><span class="zh">週期 \(T\)：轉一圈所需的時間（\(\mathrm{s}\)）</span><span class="en">Period \(T\): time for one revolution (\(\mathrm{s}\))</span></li>
+<li><span class="zh">頻率 \(f\)：每秒轉的圈數（\(\mathrm{Hz}\)）</span><span class="en">Frequency \(f\): revolutions per second (\(\mathrm{Hz}\))</span></li>
+</ul>
+<div class="eq">\(\omega=\dfrac{2\pi}{T}=2\pi f\;\Longrightarrow\;T=\dfrac{2\pi}{\omega}\)</div><p class="small">\(f=\dfrac{1}{T}\)</p>
+<p><span class="zh">推導：轉動一圈需時 \(T\)，角位移 \(\theta=2\pi\)，代入 \(\omega=\dfrac{\theta}{t}\) 即得。例 1 就是 \(T=60\ \mathrm{s}\) 的情況。</span><span class="en">Derivation: one revolution takes time \(T\) with angular displacement \(\theta=2\pi\); substitute into \(\omega=\dfrac{\theta}{t}\). Ex 1 is the case \(T=60\ \mathrm{s}\).</span></p>
+</div>
+</div></div></section>
+
+<!-- 5 v = r omega -->
+<section class="slide" data-zh="v = rω" data-en="v = rω"><div class="inner">
+<p class="sec il"><span class="zh">二、角速率、線性速率與公式推導</span><span class="en">Part 2 · Angular speed, linear speed and derivations</span></p>
+
+<h2><span class="zh">線性速率與角速率的關係</span><span class="en">Linear speed and angular speed</span></h2>
+<div class="g2">
+<div>
+<p><span class="zh">時間 \(t\) 內移動的弧長 \(s=r\theta\)，故：</span><span class="en">In time \(t\) the object moves an arc length \(s=r\theta\), so:</span></p>
+<div class="eq">\(v=\dfrac{s}{t}=\dfrac{r\theta}{t}=\boxed{\,r\omega\,}=\dfrac{2\pi r}{T}\)</div>
+<p class="small"><span class="zh">\(\omega\) 必須用 \(\mathrm{rad\,s^{-1}}\)。</span><span class="en">\(\omega\) must be in \(\mathrm{rad\,s^{-1}}\).</span></p>
+<div class="box sun"><span class="zh">同一轉盤上各點的 \(\omega\) 相同，但離圓心愈遠，\(v\) 愈大（\(v\propto r\)）。</span><span class="en">All points on a rotating disc share the same \(\omega\), but the farther from the centre, the greater \(v\) (\(v\propto r\)).</span></div>
+<div class="ro" id="ro5a"></div><div class="ro" id="ro5b"></div>
+<div class="ex"><span class="zh"><b>例</b>　單車車輪半徑 \(0.35\ \mathrm{m}\)，以 \(20\ \mathrm{rad\,s^{-1}}\) 轉動。求輪邊一點的速率。</span><span class="en"><b>Ex</b>　A bicycle wheel of radius \(0.35\ \mathrm{m}\) turns at \(20\ \mathrm{rad\,s^{-1}}\). Find the speed of a point on the rim.</span>
+<button class="btn rv il"><span class="zh">答案</span><span class="en">Answer</span></button><div class="ans" hidden>\(v=r\omega=0.35\times20=7\ \mathrm{m\,s^{-1}}\)</div></div>
+</div>
+<div>
+<div class="fig"><svg id="f5" viewBox="0 0 700 600" role="img" aria-label="Two points on a rotating disc"></svg></div>
+<div class="ctrls"><label class="sl"><span>\(\omega\)</span><input type="range" id="w5" min="0.3" max="2.5" step="0.1" value="1.2"><output id="w5v">1.2</output></label></div>
+</div>
+</div></div></section>
+
+<!-- Warm-up 2 -->
+<section class="slide" data-zh="熱身練習 2" data-en="Warm-up 2"><div class="inner">
+<p class="sec il"><span class="zh">二、角速率、線性速率與公式推導</span><span class="en">Part 2 · Angular speed, linear speed and derivations</span></p>
+<h2><span class="zh">熱身練習 2：基礎代數計算</span><span class="en">Warm-up 2: basic calculations</span></h2>
+<div class="g2 top">
+<div class="ex"><p><b>1.</b> <span class="zh">摩天輪轉動一圈需時 \(120\ \mathrm{s}\)，座艙距離圓心 \(25\ \mathrm{m}\)。求：</span><span class="en">A Ferris wheel takes \(120\ \mathrm{s}\) to make one revolution. A capsule is \(25\ \mathrm{m}\) from the centre. Find:</span></p>
+<div class="part"><b>(a)</b> <span class="zh">角速率</span><span class="en">angular speed</span> \(\omega\) <button class="btn sm rv il"><span class="zh">答案</span><span class="en">Answer</span></button><div class="ans" hidden>\(\omega=\dfrac{2\pi}{T}=\dfrac{2\pi}{120}=0.0524\ \mathrm{rad\,s^{-1}}\)</div></div>
+<div class="part"><b>(b)</b> <span class="zh">線性速率</span><span class="en">linear speed</span> \(v\) <button class="btn sm rv il"><span class="zh">答案</span><span class="en">Answer</span></button><div class="ans" hidden>\(v=r\omega=25\times0.0524=1.31\ \mathrm{m\,s^{-1}}\)</div></div>
+</div>
+<div class="ex"><p><b>2.</b> <span class="zh">唱片機以每分鐘 \(33\) 圈（\(33\ \mathrm{rpm}\)）勻速旋轉。求：</span><span class="en">A record player turns uniformly at \(33\) revolutions per minute (\(33\ \mathrm{rpm}\)). Find:</span></p>
+<div class="part"><b>(a)</b> <span class="zh">週期</span><span class="en">the period</span> \(T\) <button class="btn sm rv il"><span class="zh">答案</span><span class="en">Answer</span></button><div class="ans" hidden>\(T=\dfrac{60}{33}=1.82\ \mathrm{s}\)</div></div>
+<div class="part"><b>(b)</b> <span class="zh">角速率</span><span class="en">the angular speed</span> \(\omega\) <button class="btn sm rv il"><span class="zh">答案</span><span class="en">Answer</span></button><div class="ans" hidden>\(\omega=\dfrac{2\pi}{T}=\dfrac{2\pi}{1.82}=3.46\ \mathrm{rad\,s^{-1}}\)</div></div>
+<div class="part"><b>(c)</b> <span class="zh">距圓心 \(0.12\ \mathrm{m}\) 處的線性速率</span><span class="en">the linear speed \(0.12\ \mathrm{m}\) from the centre</span> \(v\) <button class="btn sm rv il"><span class="zh">答案</span><span class="en">Answer</span></button><div class="ans" hidden>\(v=r\omega=0.12\times3.46=0.415\ \mathrm{m\,s^{-1}}\)</div></div>
+</div>
+</div>
+<div class="row"><button class="btn revS il"><span class="zh">全部答案</span><span class="en">All answers</span></button></div>
+</div></section>
+
+<!-- DSE 2017 -->
+<section class="slide" data-zh="DSE 2017 茶壺" data-en="DSE 2017 teapot"><div class="inner">
+<p class="sec il"><span class="zh">二、角速率、線性速率與公式推導</span><span class="en">Part 2 · Angular speed, linear speed and derivations</span></p>
+<h2><span class="zh">DSE 實戰：2017 卷一乙 Q5(b)(c) 節錄</span><span class="en">DSE practice: 2017 Paper 1B Q5(b)(c) (extract)</span></h2>
+<div class="g2">
+<div>
+<p><span class="zh">將一個質量為 \(1\ \mathrm{kg}\) 的茶壺放置於水平轉盤上，茶壺距離轉盤中心 \(30\ \mathrm{cm}\)。當轉盤以每秒 \(0.5\) 週的速率旋轉時，茶壺保持在轉盤上的同一位置。現轉盤突然停下，茶壺滑動（摩擦力為 \(10\ \mathrm{N}\)）。求轉盤停下之後茶壺移動的距離。</span><span class="en">A \(1\ \mathrm{kg}\) teapot is placed on a horizontal turntable, \(30\ \mathrm{cm}\) from its centre. When the turntable rotates at \(0.5\) revolutions per second, the teapot stays at the same position on it. The turntable suddenly stops and the teapot slides (friction \(10\ \mathrm{N}\)). Find the distance moved by the teapot after the turntable stops.</span></p>
+<p class="small"><span class="zh">提示：先用剛學的公式求角速率 \(\omega\) 及滑行初速 \(u=r\omega\)</span><span class="en">Hint: first use the new formulas to find \(\omega\) and the initial sliding speed \(u=r\omega\)</span></p>
+<div class="fig"><svg id="fTea" viewBox="0 0 600 400" role="img" aria-label="Teapot on turntable"></svg></div>
+</div>
+<div>
+<div class="ex"><b class="il"><span class="zh">步驟 1（角速率 \(\omega\)）</span><span class="en">Step 1 (angular speed \(\omega\))</span></b> <button class="btn sm rv il"><span class="zh">答案</span><span class="en">Answer</span></button><div class="ans" hidden>\(\omega=2\pi f=2\pi(0.5)=\pi\approx3.14\ \mathrm{rad\,s^{-1}}\)</div></div>
+<div class="ex"><b class="il"><span class="zh">步驟 2（初速 \(u\)）</span><span class="en">Step 2 (initial speed \(u\))</span></b> <button class="btn sm rv il"><span class="zh">答案</span><span class="en">Answer</span></button><div class="ans" hidden>\(u=v=r\omega=0.30\times\pi=0.942\ \mathrm{m\,s^{-1}}\)　(1M)<br><span class="small"><span class="zh">注意 \(30\ \mathrm{cm}=0.30\ \mathrm{m}\)</span><span class="en">Note \(30\ \mathrm{cm}=0.30\ \mathrm{m}\)</span></span></div></div>
+<div class="ex"><b class="il"><span class="zh">步驟 3（滑行距離 \(s\)）</span><span class="en">Step 3 (sliding distance \(s\))</span></b> <button class="btn sm rv il"><span class="zh">答案</span><span class="en">Answer</span></button><div class="ans" hidden><span class="zh">由功能關係 \(fs=\tfrac12mu^2\)：</span><span class="en">By the work–energy relation \(fs=\tfrac12mu^2\):</span><br>\(10s=\tfrac12(1)(0.942)^2\;\Rightarrow\;s=0.0444\ \mathrm{m}\)　(1M + 1A)</div></div>
+<div class="box"><span class="zh">轉盤停下後，摩擦力不再指向圓心，茶壺沿<b>切線方向</b>滑出並減速（直線運動）。</span><span class="en">Once the turntable stops, the teapot slides off along the <b>tangent</b> in a straight line and decelerates.</span></div>
+<div class="row"><button class="btn revS il"><span class="zh">全部答案</span><span class="en">All answers</span></button></div>
+</div>
+</div></div></section>
+<!-- 6 Velocity changes -->
+<section class="slide" data-zh="速度不斷改變" data-en="Velocity keeps changing"><div class="inner">
+<p class="sec il"><span class="zh">三、向心加速度與向心力</span><span class="en">Part 3 · Centripetal acceleration and centripetal force</span></p>
+
+<h2><span class="zh">速率不變，速度卻不斷改變</span><span class="en">Constant speed, changing velocity</span></h2>
+<div class="g2">
+<div>
+<ul>
+<li><span class="zh">勻速圓周運動：速率 \(v\) 不變。</span><span class="en">Uniform circular motion: the speed \(v\) is constant.</span></li>
+<li><span class="zh">但運動方向（沿<b>切線</b>）時刻在改變。</span><span class="en">But the direction of motion (along the <b>tangent</b>) changes all the time.</span></li>
+<li><span class="zh">速度是<b>矢量</b>（有大小和方向）：方向改變 ⇒ 速度改變。</span><span class="en">Velocity is a <b>vector</b> (magnitude and direction): direction changes ⇒ velocity changes.</span></li>
+</ul>
+<div class="eq"><span class="zh">速度改變 ⇒ 有加速度</span><span class="en">Velocity changes ⇒ acceleration</span> \(\;\vec a=\dfrac{\Delta\vec v}{\Delta t}\)</div>
+<div class="box"><span class="zh">\(\Delta\vec v=\vec v_2-\vec v_1\) 總是平行於「弧的中點 → 圓心」的方向。當 \(\Delta\theta\to0\)，這就是該點加速度的方向：<b>指向圓心</b>。</span><span class="en">\(\Delta\vec v=\vec v_2-\vec v_1\) is always parallel to the line from the arc's midpoint to the centre. As \(\Delta\theta\to0\) this becomes the direction of the acceleration at that point: <b>towards the centre</b>.</span></div>
+<div class="ro" id="ro6"></div>
+</div>
+<div>
+<div class="fig"><svg id="f6" viewBox="0 0 840 520" role="img" aria-label="Change in velocity"></svg></div>
+<div class="ctrls"><label class="sl"><span>\(\Delta\theta\)</span><input type="range" id="dth" min="10" max="90" step="1" value="60"><output id="dthv">60°</output></label></div>
+<p class="cap"><span class="zh">左：圓周上兩點的速度；右：矢量三角形 \(\Delta\vec v=\vec v_2-\vec v_1\)</span><span class="en">Left: velocities at two points on the circle; right: the vector triangle \(\Delta\vec v=\vec v_2-\vec v_1\)</span></p>
+</div>
+</div></div></section>
+
+<!-- 7 Centripetal acceleration -->
+<section class="slide" data-zh="向心加速度" data-en="Centripetal acceleration"><div class="inner">
+<p class="sec il"><span class="zh">三、向心加速度與向心力</span><span class="en">Part 3 · Centripetal acceleration and centripetal force</span></p>
+
+<h2><span class="zh">向心加速度</span><span class="en">Centripetal acceleration</span></h2>
+<div class="g2">
+<div>
+<div class="eq xl">\(a_c=\dfrac{v^2}{r}=r\omega^2\)</div>
+<p><span class="zh">代入 \(v=r\omega\)：</span><span class="en">Substituting \(v=r\omega\):</span> \(a_c=\dfrac{v^2}{r}=\dfrac{(r\omega)^2}{r}=r\omega^2\)</p>
+<div class="box"><span class="zh">方向：時刻<b>指向圓心</b>（「向心」即指向中心）。單位：\(\mathrm{m\,s^{-2}}\)</span><span class="en">Direction: always <b>towards the centre</b> ("centripetal" means centre-seeking). Unit: \(\mathrm{m\,s^{-2}}\)</span></div>
+<div class="ex"><span class="zh"><b>推導（選讀）</b></span><span class="en"><b>Derivation (optional)</b></span>
+<button class="btn rv il"><span class="zh">顯示</span><span class="en">Show</span></button><div class="ans" hidden><span class="zh">由上一頁的相似三角形：</span><span class="en">From the similar triangles on the previous page:</span> \(\dfrac{|\Delta\vec v|}{v}\approx\dfrac{\Delta s}{r}\;\Rightarrow\;a_c=\dfrac{|\Delta\vec v|}{\Delta t}=\dfrac{v}{r}\cdot\dfrac{\Delta s}{\Delta t}=\dfrac{v^2}{r}\)</div></div>
+<div class="ex"><span class="zh"><b>例</b>　汽車以 \(15\ \mathrm{m\,s^{-1}}\) 駛過半徑 \(50\ \mathrm{m}\) 的彎道，求向心加速度。</span><span class="en"><b>Ex</b>　A car goes round a bend of radius \(50\ \mathrm{m}\) at \(15\ \mathrm{m\,s^{-1}}\). Find its centripetal acceleration.</span>
+<button class="btn rv il"><span class="zh">答案</span><span class="en">Answer</span></button><div class="ans" hidden>\(a_c=\dfrac{v^2}{r}=\dfrac{15^2}{50}=4.5\ \mathrm{m\,s^{-2}}\) <span class="zh">，指向彎道的圓心</span><span class="en">, towards the centre of the bend</span></div></div>
+</div>
+<div class="fig"><svg id="f7" viewBox="0 0 600 520" role="img" aria-label="Velocity and acceleration vectors"></svg></div>
+</div></div></section>
+
+<!-- 8 Centripetal force -->
+<section class="slide" data-zh="向心力" data-en="Centripetal force"><div class="inner">
+<p class="sec il"><span class="zh">三、向心加速度與向心力</span><span class="en">Part 3 · Centripetal acceleration and centripetal force</span></p>
+
+<h2><span class="zh">向心力</span><span class="en">Centripetal force</span></h2>
+<div class="g2">
+<div>
+<p><span class="zh">由牛頓第二定律 \(F=ma\)：</span><span class="en">By Newton's second law \(F=ma\):</span></p>
+<div class="eq xl">\(F_c=ma_c=\dfrac{mv^2}{r}=mr\omega^2\)</div>
+<div class="box"><span class="zh">方向：與 \(\vec a_c\) 相同，<b>指向圓心</b>。</span><span class="en">Direction: same as \(\vec a_c\), <b>towards the centre</b>.</span></div>
+<div class="box warn"><b class="il"><span class="zh">DSE 隔離體圖鐵律</span><span class="en">DSE free-body diagram rule</span></b><br><span class="zh">向心力不是額外的新力，而是現有真實力（摩擦力、張力、重力、法向力）指向圓心的<b>合力</b>。繪畫隔離體圖時，<b>嚴禁畫出「向心力 \(F_c\)」或「離心力」箭矢</b>。</span><span class="en">Centripetal force is not an extra force: it is the <b>resultant</b> of the real forces (friction, tension, gravity, normal force) towards the centre. In a free-body diagram, <b>never draw an arrow for "centripetal force \(F_c\)" or "centrifugal force"</b>.</span></div>
+<div class="ex"><span class="zh"><b>例</b>　質量 \(0.2\ \mathrm{kg}\) 的小球以長 \(0.5\ \mathrm{m}\) 的繩子在光滑水平桌面上作勻速圓周運動，速率為 \(4\ \mathrm{m\,s^{-1}}\)。求繩子的拉力。若速率加倍呢？</span><span class="en"><b>Ex</b>　A \(0.2\ \mathrm{kg}\) ball on a \(0.5\ \mathrm{m}\) string moves in uniform circular motion on a smooth horizontal table at \(4\ \mathrm{m\,s^{-1}}\). Find the tension. What if the speed doubles?</span>
+<button class="btn rv il"><span class="zh">答案</span><span class="en">Answer</span></button><div class="ans" hidden>\(F_c=\dfrac{mv^2}{r}=\dfrac{0.2\times4^2}{0.5}=6.4\ \mathrm{N}\)；<span class="zh">速率加倍，\(F\propto v^2\)，拉力變為 \(4\) 倍 \(=25.6\ \mathrm{N}\)</span><span class="en">doubling the speed: \(F\propto v^2\), so the tension becomes \(4\) times \(=25.6\ \mathrm{N}\)</span></div></div>
+</div>
+<div class="fig"><svg id="f8" viewBox="0 0 600 520" role="img" aria-label="Velocity and centripetal force vectors"></svg></div>
+</div></div></section>
+
+<!-- 9 Simulation -->
+<section class="slide" data-zh="互動模擬" data-en="Simulation"><div class="inner">
+<p class="sec il"><span class="zh">三、向心加速度與向心力</span><span class="en">Part 3 · Centripetal acceleration and centripetal force</span></p>
+
+<h2><span class="zh">互動模擬</span><span class="en">Interactive simulation</span></h2>
+<div class="g2 wide top">
+<div><div class="fig"><svg id="f9" viewBox="0 0 640 600" role="img" aria-label="Circular motion simulation"></svg></div>
+
+<p class="cap"><span class="zh">箭咀長度與數值成正比（設有上限）。\(\vec F_c\) 箭咀只表示合力的方向，隔離體圖中不可畫出。</span><span class="en">Arrow lengths are proportional to the values (capped). The \(\vec F_c\) arrow only shows the direction of the resultant force; never draw it in a free-body diagram.</span></p></div>
+<div>
+<div class="ctrls">
+<label class="sl"><span>\(m\,/\,\mathrm{kg}\)</span><input type="range" id="sm" min="0.1" max="2" step="0.1" value="0.5"><output id="smv">0.5</output></label>
+<label class="sl"><span>\(r\,/\,\mathrm{m}\)</span><input type="range" id="sr" min="0.5" max="2" step="0.1" value="1.5"><output id="srv">1.5</output></label>
+<label class="sl"><span>\(\omega\,/\,\mathrm{rad\,s^{-1}}\)</span><input type="range" id="sw" min="0.5" max="5" step="0.1" value="2"><output id="swv">2.0</output></label>
+</div>
+<div class="row">
+<label class="ck"><input type="checkbox" id="cv" checked><span class="v">\(\vec v\)</span><span class="il"><span class="zh">速度</span><span class="en">velocity</span></span></label>
+<label class="ck"><input type="checkbox" id="ca" checked><span class="a">\(\vec a_c\)</span><span class="il"><span class="zh">加速度</span><span class="en">acceleration</span></span></label>
+<label class="ck"><input type="checkbox" id="cf"><span class="f">\(\vec F_c\)</span><span class="il"><span class="zh">向心力</span><span class="en">force</span></span></label>
+</div>
+<div class="row">
+<button class="btn red il" id="cut"><span class="zh">剪斷繩子</span><span class="en">Cut the string</span></button>
+<button class="btn il" id="reset"><span class="zh">重置</span><span class="en">Reset</span></button>
+<button class="btn il" id="pause"><span class="zh">暫停</span><span class="en">Pause</span></button>
+</div>
+<div class="ro" id="s1"></div><div class="ro" id="s2"></div><div class="ro" id="s3"></div><div class="ro" id="s4"></div>
+<div class="box"><b class="il"><span class="zh">試試看</span><span class="en">Try this</span></b>
+<ol><li><span class="zh">把 \(\omega\) 加倍，\(a_c\) 和 \(F_c\) 變成幾倍？</span><span class="en">Double \(\omega\): how many times larger do \(a_c\) and \(F_c\) become?</span></li>
+<li><span class="zh">按「剪斷繩子」：小球向哪個方向飛出？</span><span class="en">Press "Cut the string": which way does the ball go?</span></li></ol></div>
+
+</div>
+</div></div></section>
+
+<!-- 10 Emphasis -->
+<section class="slide" data-zh="a 和 F 不斷改變" data-en="a and F keep changing"><div class="inner">
+<p class="sec il"><span class="zh">三、向心加速度與向心力</span><span class="en">Part 3 · Centripetal acceleration and centripetal force</span></p>
+
+<h2><span class="zh">向心加速度和向心力時刻在改變</span><span class="en">Centripetal acceleration and force keep changing</span></h2>
+<div class="g2">
+<div>
+<table class="t">
+<tr><th class="il"><span class="zh">物理量</span><span class="en">Quantity</span></th><th class="il"><span class="zh">大小</span><span class="en">Magnitude</span></th><th class="il"><span class="zh">方向</span><span class="en">Direction</span></th></tr>
+<tr><td><span class="zh">速率</span><span class="en">speed</span> \(v\)</td><td class="il"><span class="zh">不變</span><span class="en">constant</span></td><td>—</td></tr>
+<tr><td><span class="zh">速度</span><span class="en">velocity</span> <span class="v">\(\vec v\)</span></td><td class="il"><span class="zh">不變</span><span class="en">constant</span></td><td><b><span class="zh">改變</span><span class="en">changes</span></b><span class="zh">（沿切線）</span><span class="en">(along tangent)</span></td></tr>
+<tr><td><span class="zh">向心加速度</span><span class="en">centripetal acc.</span> <span class="a">\(\vec a_c\)</span></td><td class="il"><span class="zh">不變</span><span class="en">constant</span></td><td><b><span class="zh">改變</span><span class="en">changes</span></b><span class="zh">（指向圓心）</span><span class="en">(towards centre)</span></td></tr>
+<tr><td><span class="zh">向心力</span><span class="en">centripetal force</span> <span class="f">\(\vec F_c\)</span></td><td class="il"><span class="zh">不變</span><span class="en">constant</span></td><td><b><span class="zh">改變</span><span class="en">changes</span></b><span class="zh">（指向圓心）</span><span class="en">(towards centre)</span></td></tr>
+</table>
+<div class="box warn"><span class="zh">所以 \(\vec a_c\) <b>不是</b>恆定的 ⇒ 圓周運動<b>不是</b>勻加速運動，不能用 \(v=u+at\)、\(s=ut+\tfrac12at^2\) 等公式！</span><span class="en">So \(\vec a_c\) is <b>not</b> constant ⇒ circular motion is <b>not</b> uniformly accelerated motion; \(v=u+at\), \(s=ut+\tfrac12at^2\), etc. do not apply!</span></div>
+<div class="box"><span class="zh">向心力時刻與速度<b>垂直</b> ⇒ 只改變運動方向，不改變速率（不作功）。</span><span class="en">The centripetal force is always <b>perpendicular</b> to the velocity ⇒ it changes only the direction, not the speed (it does no work).</span></div>
+</div>
+<div>
+<div class="fig"><svg id="f10" viewBox="0 0 840 520" role="img" aria-label="Rotating vectors"></svg></div>
+<p class="cap"><span class="zh">右：把每一刻的 \(\vec v\) 和 \(\vec a_c\) 移到同一起點——長度不變，方向不停旋轉。</span><span class="en">Right: each instant's \(\vec v\) and \(\vec a_c\) moved to a common origin: same length, direction keeps rotating.</span></p>
+</div>
+</div></div></section>
+
+<!-- 11 Sources -->
+<section class="slide" data-zh="誰提供向心力" data-en="What provides it"><div class="inner">
+<p class="sec il"><span class="zh">三、向心加速度與向心力</span><span class="en">Part 3 · Centripetal acceleration and centripetal force</span></p>
+
+<h2><span class="zh">誰提供向心力？</span><span class="en">What provides the centripetal force?</span></h2>
+<div class="cards">
+<div class="card"><svg viewBox="0 0 200 140"><circle cx="100" cy="70" r="55" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="6 6"/><line x1="100" y1="70" x2="155" y2="70" stroke="#475569" stroke-width="3"/><circle cx="100" cy="70" r="4" fill="#0f172a"/><line x1="143" y1="70" x2="116" y2="70" stroke="#7c3aed" stroke-width="5" marker-end="url(#h-purple)"/><circle cx="155" cy="70" r="10" fill="#fbbf24" stroke="#b45309" stroke-width="2"/></svg>
+<b class="il"><span class="zh">繩子拉力</span><span class="en">Tension</span></b><p><span class="zh">用繩子甩動小球</span><span class="en">Whirling a ball on a string</span></p>\(T=\dfrac{mv^2}{r}\)</div>
+<div class="card"><svg viewBox="0 0 200 140"><path d="M20,125 Q100,5 180,125" fill="none" stroke="#94a3b8" stroke-width="22" stroke-linecap="round"/><path d="M20,125 Q100,5 180,125" fill="none" stroke="#fff" stroke-width="2" stroke-dasharray="8 8"/><rect x="82" y="52" width="36" height="20" rx="5" fill="#1d4ed8"/><line x1="100" y1="78" x2="100" y2="122" stroke="#7c3aed" stroke-width="5" marker-end="url(#h-purple)"/></svg>
+<b class="il"><span class="zh">摩擦力</span><span class="en">Friction</span></b><p><span class="zh">汽車在平路上轉彎</span><span class="en">A car turning on a flat road</span></p>\(f=\dfrac{mv^2}{r}\)</div>
+<div class="card"><svg viewBox="0 0 200 140"><circle cx="100" cy="75" r="60" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="6 6"/><circle cx="100" cy="75" r="26" fill="#3b82f6"/><path d="M84,66 q10,-8 18,0 q6,8 -4,14" fill="#22c55e"/><line x1="135" y1="40" x2="122" y2="53" stroke="#7c3aed" stroke-width="5" marker-end="url(#h-purple)"/><circle cx="142" cy="33" r="9" fill="#cbd5e1" stroke="#64748b" stroke-width="2"/></svg>
+<b class="il"><span class="zh">萬有引力</span><span class="en">Gravity</span></b><p><span class="zh">月球、人造衛星繞地球運行</span><span class="en">The Moon or a satellite orbiting the Earth</span></p>\(F_g=\dfrac{mv^2}{r}\)</div>
+<div class="card"><svg viewBox="0 0 200 140"><circle cx="100" cy="70" r="58" fill="#fff" stroke="#475569" stroke-width="6"/><circle cx="100" cy="70" r="4" fill="#0f172a"/><rect x="141" y="58" width="12" height="24" rx="3" fill="#ea580c"/><line x1="138" y1="70" x2="108" y2="70" stroke="#7c3aed" stroke-width="5" marker-end="url(#h-purple)"/></svg>
+<b class="il"><span class="zh">法向反作用力</span><span class="en">Normal force</span></b><p><span class="zh">洗衣機脫水時衣服緊貼筒壁</span><span class="en">Clothes pressed on a spin-dryer drum</span></p>\(N=\dfrac{mv^2}{r}\)</div>
+</div>
+<div class="g2 top">
+<div class="box warn"><b class="il"><span class="zh">DSE 隔離體圖鐵律</span><span class="en">DSE free-body diagram rule</span></b><br><span class="zh">向心力不是額外的新力，而是現有真實力（摩擦力、張力、重力、法向力）指向圓心的<b>合力</b>。繪畫隔離體圖時，<b>嚴禁畫出「向心力 \(F_c\)」或「離心力」箭矢</b>。</span><span class="en">Centripetal force is not an extra force: it is the <b>resultant</b> of the real forces (friction, tension, gravity, normal force) towards the centre. In a free-body diagram, <b>never draw an arrow for "centripetal force \(F_c\)" or "centrifugal force"</b>.</span></div>
+<div class="box good"><span class="zh">繩子斷開 ⇒ 向心力消失 ⇒ 物體沿<b>切線方向</b>作勻速直線運動（牛頓第一定律）。</span><span class="en">String breaks ⇒ no centripetal force ⇒ the object moves in a straight line along the <b>tangent</b> at constant speed (Newton's first law).</span>
+<div class="row"><button class="btn il" data-go="12"><span class="zh">到模擬試試</span><span class="en">Try it in the simulation</span></button></div></div>
+</div>
+</div></section>
+
+<!-- DSE 2016 / 2012 -->
+<section class="slide" data-zh="DSE 向心力題型" data-en="DSE questions"><div class="inner">
+<p class="sec il"><span class="zh">三、向心加速度與向心力</span><span class="en">Part 3 · Centripetal acceleration and centripetal force</span></p>
+<h2><span class="zh">DSE 實戰：向心加速度與向心力</span><span class="en">DSE practice: centripetal acceleration and force</span></h2>
+<div class="g2 top">
+<div class="dse"><h3 class="il"><span class="zh">2016 卷一甲 Q13（多項選擇題）</span><span class="en">2016 Paper 1A Q13 (MC)</span></h3>
+<p><span class="zh">在一水平的圓形平台上，跟中心點 \(O\) 距離 \(r\) 和 \(\tfrac{r}{2}\) 的地方分別固定着粒子 \(P\) 和 \(Q\)，而平台以勻速轉動。\(P\) 與 \(Q\) 的加速度之比為：</span><span class="en">Particles \(P\) and \(Q\) are fixed on a horizontal circular platform at distances \(r\) and \(\tfrac{r}{2}\) from the centre \(O\). The platform rotates uniformly. The ratio of the accelerations of \(P\) to \(Q\) is:</span></p>
+<svg class="mini" id="fPQ" viewBox="0 0 320 170" role="img" aria-label="Platform with P and Q"></svg>
+<div class="mc" data-a="1"><div class="opts"><button class="opt" data-i="0"><b>A.</b> \(1:2\)</button><button class="opt" data-i="1"><b>B.</b> \(2:1\)</button><button class="opt" data-i="2"><b>C.</b> \(1:4\)</button><button class="opt" data-i="3"><b>D.</b> \(4:1\)</button></div>
+<div class="ans" hidden><span class="zh">答案：<b>B</b>。同一平台上 \(\omega\) 相同，由 \(a_c=r\omega^2\)：\(a_P:a_Q=r:\tfrac{r}{2}=2:1\)。<br><span class='small'>常見錯誤：用 \(a_c=\tfrac{v^2}{r}\) 但誤以為 \(v\) 相同。</span></span><span class="en">Answer: <b>B</b>. Both have the same \(\omega\); by \(a_c=r\omega^2\), \(a_P:a_Q=r:\tfrac{r}{2}=2:1\).<br><span class='small'>Common mistake: using \(a_c=\tfrac{v^2}{r}\) and assuming \(v\) is the same.</span></span></div></div>
+</div>
+<div class="dse"><h3 class="il"><span class="zh">2012 卷一乙 Q3(a)（長題目）</span><span class="en">2012 Paper 1B Q3(a) (long question)</span></h3>
+<p><span class="zh">一輛質量為 \(1200\ \mathrm{kg}\) 的汽車，以恆速率沿半徑為 \(45\ \mathrm{m}\) 的水平圓形線道 1 行駛（外圈線道 2 半徑較大）。</span><span class="en">A car of mass \(1200\ \mathrm{kg}\) travels at constant speed along horizontal circular lane 1 of radius \(45\ \mathrm{m}\) (outer lane 2 has a larger radius).</span></p>
+<svg class="mini" id="fLane" viewBox="0 0 320 170" role="img" aria-label="Two circular lanes"></svg>
+<div class="part"><b>(i)</b> <span class="zh">指出什麼力為這輛汽車提供向心力。如該力的最大值為 \(8000\ \mathrm{N}\)，計算該車可在線道 1 上行駛的最高速率。（3 分）</span><span class="en">State which force provides the centripetal force on the car. If its maximum value is \(8000\ \mathrm{N}\), find the maximum speed of the car in lane 1. (3 marks)</span> <button class="btn sm rv il"><span class="zh">答案</span><span class="en">Answer</span></button>
+<div class="ans" hidden><span class="zh">摩擦力 (1A)</span><span class="en">Friction (1A)</span><br>\(f=\dfrac{mv^2}{r}:\ 8000=\dfrac{1200v^2}{45}\)　(1M)　\(\Rightarrow v=17.3\ \mathrm{m\,s^{-1}}\)　(1A)</div></div>
+<div class="part"><b>(ii)</b> <span class="zh">倘若汽車改為沿線道 2 行駛，提供向心力的最大值仍為 \(8000\ \mathrm{N}\)，最高速率會小於、大於還是等於 (i) 所得的值？試解釋。（2 分）</span><span class="en">If the car travels in lane 2 instead, with the same maximum of \(8000\ \mathrm{N}\), is the maximum speed less than, greater than or equal to that in (i)? Explain. (2 marks)</span> <button class="btn sm rv il"><span class="zh">答案</span><span class="en">Answer</span></button>
+<div class="ans" hidden><span class="zh"><b>大於</b> (1A)。線道 2 的 \(r\) 較大，而最大 \(f\) 及 \(m\) 不變；由 \(f=\dfrac{mv^2}{r}\)，最高速率 \(v\) 隨 \(r\) 增加而上升 (1A)。</span><span class="en"><b>Greater</b> (1A). Lane 2 has a larger \(r\) while the maximum \(f\) and \(m\) are unchanged; by \(f=\dfrac{mv^2}{r}\), the maximum speed \(v\) increases with \(r\) (1A).</span></div></div>
+</div>
+</div>
+<div class="row"><button class="btn revS il"><span class="zh">全部答案</span><span class="en">All answers</span></button></div>
+</div></section>
+<!-- 12 Quiz -->
+<section class="slide" data-zh="課堂小測" data-en="Quick quiz"><div class="inner">
+<h2><span class="zh">課堂小測</span><span class="en">Quick quiz</span></h2>
+<div id="qbox"></div>
+<div class="row" style="margin-top:1rem">
+<button class="btn il" id="qPrev"><span class="zh">上一題</span><span class="en">Previous</span></button>
+<button class="btn solid il" id="qNext"><span class="zh">下一題</span><span class="en">Next</span></button>
+</div>
+</div></section>
+
+<!-- 13 Summary -->
+<section class="slide" data-zh="總結" data-en="Summary"><div class="inner">
+<h2><span class="zh">總結</span><span class="en">Summary</span></h2>
+<div class="sum">
+<div class="box"><h3 class="il"><span class="zh">弧度</span><span class="en">Radian</span></h3>\(\theta=\dfrac{s}{r}\qquad \pi\ \mathrm{rad}=180^\circ\qquad 1\ \mathrm{rev}=2\pi\ \mathrm{rad}\)</div>
+<div class="box"><h3 class="il"><span class="zh">角速率</span><span class="en">Angular speed</span></h3>\(\omega=\dfrac{\theta}{t}=\dfrac{2\pi}{T}=2\pi f\)</div>
+<div class="box"><h3 class="il"><span class="zh">線性速率</span><span class="en">Linear speed</span></h3>\(v=r\omega=\dfrac{2\pi r}{T}\)</div>
+<div class="box"><h3 class="il"><span class="zh">向心加速度</span><span class="en">Centripetal acceleration</span></h3>\(a_c=\dfrac{v^2}{r}=r\omega^2\)　<span class="il"><span class="zh">指向圓心</span><span class="en">towards the centre</span></span></div>
+<div class="box"><h3 class="il"><span class="zh">向心力</span><span class="en">Centripetal force</span></h3>\(F_c=ma_c=\dfrac{mv^2}{r}=mr\omega^2\)　<span class="il"><span class="zh">指向圓心</span><span class="en">towards the centre</span></span></div>
+<div class="box sun"><h3 class="il"><span class="zh">記住</span><span class="en">Remember</span></h3><span class="zh">速率不變，速度改變；\(a_c\)、\(F_c\) 大小不變，方向時刻改變；隔離體圖不畫 \(F_c\)。</span><span class="en">Speed constant, velocity changing; \(a_c\) and \(F_c\) constant in size but always changing direction; never draw \(F_c\) in a free-body diagram.</span></div>
+</div>
+</div></section>
+
+</main>
+
+<nav class="bar" aria-label="Slides">
+<div class="prog" id="prog"></div>
+<button class="ib" id="prev" aria-label="Previous"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 5l-7 7 7 7"/></svg></button>
+<select id="jump" aria-label="Go to page"></select>
+<span id="count">1 / 14</span>
+<button class="ib" id="next" aria-label="Next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 5l7 7-7 7"/></svg></button>
+<span class="sp"></span>
+<div class="seg" role="group" aria-label="Language"><button data-l="zh" aria-pressed="true">中文</button><button data-l="both" aria-pressed="false">中 / EN</button><button data-l="en" aria-pressed="false">EN</button></div>
+<button class="ib" id="zm" aria-label="Smaller text">A−</button>
+<button class="ib" id="zp" aria-label="Larger text">A+</button>
+<button class="ib" id="fs" aria-label="Full screen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+</nav>
+
+<script>
+{
+const C={blue:'#1d4ed8',red:'#e11d48',purple:'#7c3aed',orange:'#ea580c',gray:'#475569',ink:'#0f172a'};
+const NS='http://www.w3.org/2000/svg';
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const B=(zh,en)=>`<span class="zh">${zh}</span><span class="en">${en}</span>`;
+const fx=(x,d=2)=>{let s=x.toFixed(d);if(s.includes('.'))s=s.replace(/0+$/,'').replace(/\.$/,'');return s};
+function setA(e,a){for(const k in a)e.setAttribute(k,a[k])}
+function E(tag,a,p){const e=document.createElementNS(NS,tag);setA(e,a||{});if(p)p.appendChild(e);return e}
+function arrow(p,col,w=5){return E('line',{stroke:C[col],'stroke-width':w,'marker-end':'url(#h-'+col+')'},p)}
+function ln(l,x1,y1,x2,y2){setA(l,{x1,y1,x2,y2})}
+function vis(e,b){e.style.display=b?'':'none'}
+function at(g,x,y){g.setAttribute('transform','translate('+x.toFixed(1)+','+y.toFixed(1)+')')}
+function texG(p,tex,size,col){
+  const g=E('g',{},p);g.style.color=col||C.ink;
+  try{if(window.MathJax&&MathJax.tex2svg){
+    const s=MathJax.tex2svg(tex,{display:false}).querySelector('svg');const k=size*0.45;
+    const W=parseFloat(s.getAttribute('width'))*k,H=parseFloat(s.getAttribute('height'))*k;
+    s.removeAttribute('style');setA(s,{width:W,height:H,x:-W/2,y:-H/2,overflow:'visible'});g.appendChild(s);return g}}catch(e){}
+  const t=E('text',{'text-anchor':'middle','dominant-baseline':'central','font-size':size,'font-style':'italic','font-family':'Times New Roman,serif',fill:col||C.ink},g);
+  t.textContent=tex.replace(/\\(vec|mathrm|text|Delta|theta|omega)/g,m=>({'\\Delta':'Δ','\\theta':'θ','\\omega':'ω'}[m]||'')).replace(/\\,|[{}\\_]/g,'');return g}
+
+/* MathJax typesetting queue */
+let mq=Promise.resolve();const timers={};
+function setTex(el,html){clearTimeout(timers[el.id]);timers[el.id]=setTimeout(()=>{
+  if(!(window.MathJax&&MathJax.typesetPromise)){el.innerHTML=html;return}
+  mq=mq.then(()=>{MathJax.typesetClear([el]);el.innerHTML=html;return MathJax.typesetPromise([el])}).catch(()=>{})},50)}
+function typeset(el){if(window.MathJax&&MathJax.typesetPromise)mq=mq.then(()=>{MathJax.typesetClear([el]);return MathJax.typesetPromise([el])}).catch(()=>{})}
+
+/* Deck navigation */
+const deck=$('#deck'),slides=$$('.slide'),N=slides.length;let cur=0;
+const jump=$('#jump');jump.innerHTML=slides.map((s,i)=>`<option value="${i}"></option>`).join('');
+function setCur(i){cur=i;$('#count').textContent=(i+1)+' / '+N;jump.value=i;$('#prog').style.width=((i+1)/N*100)+'%'}
+function go(i,smooth=true){i=Math.max(0,Math.min(N-1,i));deck.scrollTo({left:i*deck.clientWidth,behavior:smooth?'smooth':'auto'});setCur(i)}
+deck.addEventListener('scroll',()=>{const i=Math.round(deck.scrollLeft/deck.clientWidth);if(i!==cur&&Math.abs(deck.scrollLeft-i*deck.clientWidth)<4)setCur(i)},{passive:true});
+window.addEventListener('resize',()=>deck.scrollTo({left:cur*deck.clientWidth}));
+$('#prev').onclick=()=>go(cur-1);$('#next').onclick=()=>go(cur+1);
+jump.onchange=()=>go(+jump.value);
+$$('[data-go]').forEach(b=>b.onclick=()=>go(+b.dataset.go));
+
+const langs=['zh','both','en'];
+function setLang(l){const h=document.documentElement;h.dataset.lang=l;h.lang=l==='en'?'en':'zh-Hant';
+  $$('.seg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.l===l));
+  [...jump.options].forEach((o,i)=>{const d=slides[i].dataset;o.textContent=(i+1)+'. '+(l==='en'?d.en:l==='zh'?d.zh:d.zh+' / '+d.en)});
+  try{localStorage.setItem('cm-lang',l)}catch(e){}}
+$$('.seg button').forEach(b=>b.onclick=()=>setLang(b.dataset.l));
+let z=1;function setZ(v){z=Math.max(.7,Math.min(1.6,Math.round(v*10)/10));document.documentElement.style.setProperty('--z',z);try{localStorage.setItem('cm-z',z)}catch(e){}}
+$('#zm').onclick=()=>setZ(z-.1);$('#zp').onclick=()=>setZ(z+.1);
+$('#fs').onclick=()=>{try{if(document.fullscreenElement)document.exitFullscreen();else document.documentElement.requestFullscreen().catch(()=>{})}catch(e){}};
+try{setLang(localStorage.getItem('cm-lang')||'zh');setZ(+(localStorage.getItem('cm-z')||1))}catch(e){setLang('zh')}
+setCur(0);
+document.addEventListener('keydown',e=>{
+  const t=e.target,tag=t.tagName;if(e.altKey||e.ctrlKey||e.metaKey)return;
+  if(tag==='INPUT'&&t.type!=='checkbox'&&t.type!=='range')return;
+  if((tag==='INPUT'&&t.type==='range'||tag==='SELECT')&&e.key.startsWith('Arrow'))return;
+  if(e.key==='ArrowRight'||e.key==='PageDown'||(e.key===' '&&tag!=='BUTTON')){e.preventDefault();go(cur+1)}
+  else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();go(cur-1)}
+  else if(e.key==='Home')go(0);else if(e.key==='End')go(N-1);
+  else if(e.key==='l'||e.key==='L')setLang(langs[(langs.indexOf(document.documentElement.dataset.lang)+1)%3]);
+  else if(e.key==='f'||e.key==='F')$('#fs').click();
+});
+
+/* Reveal buttons and table */
+$$('.rv').forEach(b=>b.onclick=()=>{const a=b.nextElementSibling;a.hidden=!a.hidden});
+$$('td.hid').forEach(td=>td.onclick=()=>td.classList.toggle('shown'));
+$$('.revS').forEach(b=>b.onclick=()=>{const a=[...b.closest('.slide').querySelectorAll('.ans')],h=a.some(x=>x.hidden);a.forEach(x=>x.hidden=!h)});
+document.addEventListener('click',e=>{const b=e.target.closest('.mc .opt');if(!b)return;const m=b.closest('.mc');if(m.dataset.done)return;m.dataset.done=1;
+  const bs=[...m.querySelectorAll('.opt')],a=+m.dataset.a;bs[a].classList.add('right');if(+b.dataset.i!==a)b.classList.add('wrong');m.querySelector('.ans').hidden=false});
+$('#revAll').onclick=()=>{const c=$$('td.hid'),all=c.every(t=>t.classList.contains('shown'));c.forEach(t=>t.classList.toggle('shown',!all))};
+
+/* Animation loop */
+const anims=[];
+function anim(svg,fn){anims.push({s:slides.indexOf(svg.closest('.slide')),fn});fn(0)}
+let last=performance.now();
+function loop(t){const dt=Math.min(.05,(t-last)/1000);last=t;for(const a of anims)if(a.s===cur)a.fn(dt);requestAnimationFrame(loop)}
+
+function makeOrbit(svg,o){
+  o=Object.assign({phi:.7,w:1.3,Lv:110,La:85,LF:85,showV:true,showA:true,showF:false,free:false,paused:false},o);
+  const g=E('g',{},svg);
+  o.ring=E('circle',{cx:o.cx,cy:o.cy,r:o.R,fill:'none',stroke:'#94a3b8','stroke-width':2.5,'stroke-dasharray':'9 9'},g);
+  o.tan=E('line',{stroke:'#94a3b8','stroke-width':2.5,'stroke-dasharray':'6 8'},g);vis(o.tan,false);
+  o.str=E('line',{stroke:C.gray,'stroke-width':3},g);
+  E('circle',{cx:o.cx,cy:o.cy,r:6,fill:C.ink},g);
+  o.aA=arrow(g,'red');o.aF=arrow(g,'purple');o.aV=arrow(g,'blue');
+  o.ball=E('circle',{r:15,fill:'#fbbf24',stroke:'#b45309','stroke-width':3},g);
+  o.lV=texG(g,'\\vec v',32,C.blue);o.lA=texG(g,'\\vec a_c',32,C.red);o.lF=texG(g,'\\vec F_c',32,C.purple);
+  o.draw=()=>{
+    if(!o.free){const s=Math.sin(o.phi),c=Math.cos(o.phi);o.x=o.cx+o.R*c;o.y=o.cy-o.R*s;o.tx=-s;o.ty=-c;o.nx=-c;o.ny=s}
+    const x=o.x,y=o.y,tx=o.tx,ty=o.ty,nx=o.nx,ny=o.ny;
+    setA(o.ball,{cx:x,cy:y});vis(o.str,!o.free);if(!o.free)ln(o.str,o.cx,o.cy,x,y);
+    vis(o.aV,o.showV);vis(o.lV,o.showV);
+    if(o.showV){ln(o.aV,x,y,x+tx*o.Lv,y+ty*o.Lv);at(o.lV,x+tx*(o.Lv+28),y+ty*(o.Lv+28))}
+    const sa=o.showA&&!o.free,sf=o.showF&&!o.free,off=sa&&sf?10:0;
+    vis(o.aA,sa);vis(o.lA,sa);vis(o.aF,sf);vis(o.lF,sf);
+    if(sa){const bx=x+tx*off,by=y+ty*off;ln(o.aA,bx,by,bx+nx*o.La,by+ny*o.La);at(o.lA,bx+nx*o.La*.55+tx*30,by+ny*o.La*.55+ty*30)}
+    if(sf){const bx=x-tx*off,by=y-ty*off;ln(o.aF,bx,by,bx+nx*o.LF,by+ny*o.LF);at(o.lF,bx+nx*o.LF*.55-tx*30,by+ny*o.LF*.55-ty*30)}
+  };
+  o.step=dt=>{if(!o.paused){if(!o.free)o.phi+=o.w*dt;else if(Math.hypot(o.x-o.cx,o.y-o.cy)<1500){o.x+=o.vx*dt;o.y+=o.vy*dt}}o.draw()};
+  return o}
+
+/* Radian figure */
+function drawRad(){
+  const f=$('#f1'),deg=+$('#th').value,th=deg*Math.PI/180,cx=300,cy=285,R=200;f.innerHTML='';
+  E('circle',{cx,cy,r:R,fill:'#fff',stroke:'#94a3b8','stroke-width':2.5},f);
+  const ex=cx+R*Math.cos(th),ey=cy-R*Math.sin(th),lg=th>Math.PI?1:0;
+  if(deg>0){
+    const full=deg>=359.9,d=full?`M${cx+R},${cy}A${R},${R} 0 1 0 ${cx-R},${cy}A${R},${R} 0 1 0 ${cx+R},${cy}`:`M${cx+R},${cy}A${R},${R} 0 ${lg} 0 ${ex},${ey}`;
+    E('path',{d,fill:'none',stroke:C.orange,'stroke-width':10,'stroke-linecap':'round'},f);
+    const r2=48,d2=full?`M${cx+r2},${cy}A${r2},${r2} 0 1 0 ${cx-r2},${cy}A${r2},${r2} 0 1 0 ${cx+r2},${cy}`:`M${cx+r2},${cy}A${r2},${r2} 0 ${lg} 0 ${cx+r2*Math.cos(th)},${cy-r2*Math.sin(th)}`;
+    E('path',{d:d2,fill:'none',stroke:C.ink,'stroke-width':2.5},f)}
+  E('line',{x1:cx,y1:cy,x2:cx+R,y2:cy,stroke:C.gray,'stroke-width':4},f);
+  E('line',{x1:cx,y1:cy,x2:ex,y2:ey,stroke:C.gray,'stroke-width':4},f);
+  E('circle',{cx,cy,r:6,fill:C.ink},f);
+  at(texG(f,'r',36,C.gray),cx+R/2,cy+28);
+  if(deg>4){const h=th/2;at(texG(f,'s',38,C.orange),cx+(R+34)*Math.cos(h),cy-(R+34)*Math.sin(h));at(texG(f,'\\theta',34,C.ink),cx+82*Math.cos(h),cy-82*Math.sin(h))}
+  $('#thv').textContent=fx(deg,1)+'°';
+  setTex($('#ro1a'),`\\(\\theta=${fx(deg,1)}^\\circ=${th.toFixed(3)}\\ \\mathrm{rad}\\)`);
+  setTex($('#ro1b'),`\\(s=${th.toFixed(3)}\\,r\\)`)}
+
+/* Converter */
+const gcd=(a,b)=>b?gcd(b,a%b):a;
+function piFrac(d){if(!Number.isInteger(d)||d===0)return'';const sg=d<0?'-':'';d=Math.abs(d);const g=gcd(d,180),n=d/g,m=180/g,num=(n===1?'':n)+'\\pi';return '='+sg+(m===1?num:`\\dfrac{${num}}{${m}}`)}
+function conv(){
+  const d=parseFloat($('#dIn').value),r=parseFloat($('#rIn').value);
+  setTex($('#dOut'),isFinite(d)?`\\(${fx(d,4)}^\\circ=${fx(d,4)}\\times\\dfrac{\\pi}{180^\\circ}${piFrac(d)}\\approx${(d*Math.PI/180).toFixed(3)}\\ \\mathrm{rad}\\)`:'');
+  {const n=parseFloat($('#nIn').value);setTex($('#nOut'),isFinite(n)?`\\(${fx(n,4)}\\ \\mathrm{rev}=${fx(n,4)}\\times2\\pi\\approx${(n*2*Math.PI).toFixed(2)}\\ \\mathrm{rad}\\)`:'')}
+  setTex($('#rOut'),isFinite(r)?`\\(${fx(r,4)}\\ \\mathrm{rad}=${fx(r,4)}\\times\\dfrac{180^\\circ}{\\pi}\\approx${(r*180/Math.PI).toFixed(1)}^\\circ\\)`:'')}
+
+/* Δv figure */
+function drawDv(){
+  const f=$('#f6'),d=+$('#dth').value,cx=290,cy=300,R=190,L=130,rad=Math.PI/180;f.innerHTML='';
+  const a1=(90-d/2)*rad,a2=(90+d/2)*rad,P=a=>[cx+R*Math.cos(a),cy-R*Math.sin(a)],T=a=>[-Math.sin(a),-Math.cos(a)];
+  E('circle',{cx,cy,r:R,fill:'#fff',stroke:'#94a3b8','stroke-width':2.5,'stroke-dasharray':'9 9'},f);
+  const [Ax,Ay]=P(a1),[Bx,By]=P(a2),[t1x,t1y]=T(a1),[t2x,t2y]=T(a2);
+  E('line',{x1:cx,y1:cy,x2:Ax,y2:Ay,stroke:'#94a3b8','stroke-width':2.5},f);E('line',{x1:cx,y1:cy,x2:Bx,y2:By,stroke:'#94a3b8','stroke-width':2.5},f);
+  const r3=44;E('path',{d:`M${cx+r3*Math.cos(a1)},${cy-r3*Math.sin(a1)}A${r3},${r3} 0 0 0 ${cx+r3*Math.cos(a2)},${cy-r3*Math.sin(a2)}`,fill:'none',stroke:C.orange,'stroke-width':3},f);
+  at(texG(f,'\\Delta\\theta',26,C.orange),cx,cy-72);
+  E('circle',{cx,cy,r:6,fill:C.ink},f);
+  ln(arrow(f,'red',4),cx,cy-R+6,cx,cy-R+86);at(texG(f,'\\Delta\\vec v',26,C.red),cx+36,cy-R+60);
+  ln(arrow(f,'blue'),Ax,Ay,Ax+t1x*L,Ay+t1y*L);ln(arrow(f,'blue'),Bx,By,Bx+t2x*L,By+t2y*L);
+  E('circle',{cx:Ax,cy:Ay,r:9,fill:'#fbbf24',stroke:'#b45309','stroke-width':2},f);E('circle',{cx:Bx,cy:By,r:9,fill:'#fbbf24',stroke:'#b45309','stroke-width':2},f);
+  at(texG(f,'\\vec v_1',28,C.blue),Ax+t1x*(L+30),Ay+t1y*(L+30));at(texG(f,'\\vec v_2',28,C.blue),Bx+t2x*(L+30),By+t2y*(L+30));
+  const Ox=760,Oy=170,p1=[Ox+t1x*L,Oy+t1y*L],p2=[Ox+t2x*L,Oy+t2y*L];
+  E('circle',{cx:Ox,cy:Oy,r:5,fill:C.ink},f);
+  ln(arrow(f,'blue'),Ox,Oy,p1[0],p1[1]);ln(arrow(f,'blue'),Ox,Oy,p2[0],p2[1]);ln(arrow(f,'red'),p1[0],p1[1],p2[0],p2[1]);
+  at(texG(f,'\\vec v_1',28,C.blue),(Ox+p1[0])/2+6,(Oy+p1[1])/2-24);at(texG(f,'\\vec v_2',28,C.blue),(Ox+p2[0])/2+6,(Oy+p2[1])/2+26);
+  at(texG(f,'\\Delta\\vec v',28,C.red),p1[0]-42,Oy);
+  $('#dthv').textContent=d+'°';
+  setTex($('#ro6'),`\\(\\Delta\\theta=${d}^\\circ:\\quad|\\Delta\\vec v|=2v\\sin\\tfrac{\\Delta\\theta}{2}=${(2*Math.sin(d*rad/2)).toFixed(3)}\\,v\\)`)}
+
+/* Quiz */
+const Q=[
+ {zh:'把 \\(150^\\circ\\) 轉換為弧度。',en:'Convert \\(150^\\circ\\) to radians.',o:['\\(\\dfrac{2\\pi}{3}\\)','\\(\\dfrac{3\\pi}{4}\\)','\\(\\dfrac{5\\pi}{6}\\)','\\(\\dfrac{5\\pi}{3}\\)'],a:2,x:'\\(150^\\circ\\times\\dfrac{\\pi}{180^\\circ}=\\dfrac{5\\pi}{6}\\ \\mathrm{rad}\\)'},
+ {zh:'飛輪每分鐘轉 \\(600\\) 圈，其角速率是多少？',en:'A flywheel turns at \\(600\\) revolutions per minute. What is its angular speed?',o:['\\(10\\ \\mathrm{rad\\,s^{-1}}\\)','\\(62.8\\ \\mathrm{rad\\,s^{-1}}\\)','\\(600\\ \\mathrm{rad\\,s^{-1}}\\)','\\(3770\\ \\mathrm{rad\\,s^{-1}}\\)'],a:1,x:'\\(\\omega=\\dfrac{600\\times2\\pi}{60}=20\\pi\\approx62.8\\ \\mathrm{rad\\,s^{-1}}\\)'},
+ {zh:'同一轉盤上，A 點距圓心 \\(0.2\\ \\mathrm{m}\\)，B 點距圓心 \\(0.6\\ \\mathrm{m}\\)。\\(v_B:v_A\\) 是多少？',en:'On the same turntable, A is \\(0.2\\ \\mathrm{m}\\) and B is \\(0.6\\ \\mathrm{m}\\) from the centre. Find \\(v_B:v_A\\).',o:['\\(1:3\\)','\\(1:1\\)','\\(3:1\\)','\\(9:1\\)'],a:2,xz:'兩點 \\(\\omega\\) 相同，\\(v=r\\omega\\propto r\\)，所以 \\(v_B:v_A=0.6:0.2=3:1\\)。',xe:'Both points have the same \\(\\omega\\); \\(v=r\\omega\\propto r\\), so \\(v_B:v_A=0.6:0.2=3:1\\).'},
+ {zh:'物體作勻速圓周運動，以下哪一項保持不變？',en:'For an object in uniform circular motion, which quantity stays constant?',o:[['速度','velocity'],['速率','speed'],['加速度','acceleration'],['向心力','centripetal force']],a:1,xz:'只有速率不變；速度、加速度和向心力的方向都不斷改變。',xe:'Only the speed is constant; the directions of velocity, acceleration and centripetal force keep changing.'},
+ {zh:'半徑不變，若物體的速率加倍，所需的向心力 \\(F_c\\) 變為原來的多少倍？',en:'With the radius unchanged, if the speed doubles, the centripetal force needed becomes how many times the original?',o:['\\(\\tfrac14\\)','\\(\\tfrac12\\)','\\(2\\)','\\(4\\)'],a:3,x:'\\(F_c=\\dfrac{mv^2}{r}\\propto v^2,\\quad 2^2=4\\)'},
+ {zh:'小球在水平面上作圓周運動時繩子突然斷開，小球會怎樣運動？',en:'A ball is whirled in a horizontal circle and the string suddenly breaks. How does the ball move?',o:[['沿半徑向外飛出','Outwards along the radius'],['沿切線方向作直線運動','In a straight line along the tangent'],['繼續沿圓周運動','It keeps moving in the circle'],['沿半徑移向圓心','Inwards towards the centre']],a:1,xz:'繩斷後沒有向心力；根據牛頓第一定律，小球以斷開一刻的速度沿切線方向作直線運動。',xe:'With no centripetal force, by Newton\'s first law the ball continues in a straight line along the tangent with the velocity it had at that instant.'}
+];
+let qi=0;const qbox=$('#qbox');
+function renderQ(){const q=Q[qi];delete qbox.dataset.done;
+  qbox.innerHTML=`<p class="qn il">${B('第 '+(qi+1)+' / '+Q.length+' 題','Question '+(qi+1)+' of '+Q.length)}</p><div class="qq">${B(q.zh,q.en)}</div><div class="opts">${q.o.map((o,i)=>`<button class="opt" data-i="${i}"><b>${'ABCD'[i]}.</b> ${Array.isArray(o)?B(o[0],o[1]):o}</button>`).join('')}</div><div class="ans" hidden>${q.x||B(q.xz,q.xe)}</div>`;
+  typeset(qbox)}
+qbox.addEventListener('click',e=>{const b=e.target.closest('.opt');if(!b||qbox.dataset.done)return;qbox.dataset.done=1;
+  const q=Q[qi],bs=[...qbox.querySelectorAll('.opt')];bs[q.a].classList.add('right');if(+b.dataset.i!==q.a)b.classList.add('wrong');qbox.querySelector('.ans').hidden=false});
+$('#qPrev').onclick=()=>{qi=(qi+Q.length-1)%Q.length;renderQ()};$('#qNext').onclick=()=>{qi=(qi+1)%Q.length;renderQ()};
+
+let started=false;
+function start(){if(started)return;started=true;
+  /* Title, acceleration, force figures */
+  const o0=makeOrbit($('#f0'),{cx:300,cy:260,R:180,w:1.3,Lv:115,La:85});anim($('#f0'),o0.step);
+  const o7=makeOrbit($('#f7'),{cx:300,cy:260,R:180,w:1.1,Lv:115,La:90});anim($('#f7'),o7.step);
+  const o8=makeOrbit($('#f8'),{cx:300,cy:260,R:180,w:1.1,Lv:115,LF:90,showA:false,showF:true});anim($('#f8'),o8.step);
+
+  /* Angular speed */
+  {const f=$('#f3'),cx=300,cy=280,R=200,ws=$('#w3');let phi=.3;
+   E('circle',{cx,cy,r:R,fill:'#fff',stroke:'#94a3b8','stroke-width':2.5},f);
+   const sec=E('path',{fill:C.orange,'fill-opacity':.22,stroke:C.orange,'stroke-width':2},f);
+   const arm=E('line',{stroke:C.gray,'stroke-width':5},f);E('circle',{cx,cy,r:7,fill:C.ink},f);
+   const ball=E('circle',{r:15,fill:'#fbbf24',stroke:'#b45309','stroke-width':3},f);
+   const lab=texG(f,'1\\,\\mathrm{s}',26,C.orange);
+   const upd=()=>{const w=+ws.value;$('#w3v').textContent=fx(w,1);
+     setTex($('#ro3a'),`\\(\\omega=${fx(w,1)}\\ \\mathrm{rad\\,s^{-1}}\\approx${(w*180/Math.PI).toFixed(1)}^\\circ\\,\\mathrm{s^{-1}}\\)`);
+     setTex($('#ro3b'),`\\(T=\\dfrac{2\\pi}{\\omega}=${(2*Math.PI/w).toFixed(2)}\\ \\mathrm{s}\\)`)};
+   ws.oninput=upd;upd();
+   anim(f,dt=>{const w=+ws.value;phi+=w*dt;const p0=phi-w,P=a=>[cx+R*Math.cos(a),cy-R*Math.sin(a)],[x0,y0]=P(p0),[x1,y1]=P(phi);
+     sec.setAttribute('d',`M${cx},${cy}L${x0},${y0}A${R},${R} 0 ${w>Math.PI?1:0} 0 ${x1},${y1}Z`);
+     ln(arm,cx,cy,x1,y1);setA(ball,{cx:x1,cy:y1});at(lab,cx+.6*R*Math.cos(phi-w/2),cy-.6*R*Math.sin(phi-w/2))})}
+
+  /* v = r omega */
+  {const f=$('#f5'),cx=350,cy=300,RA=100,RB=200,ws=$('#w5');let phi=.5;
+   E('circle',{cx,cy,r:228,fill:'#fff',stroke:'#94a3b8','stroke-width':2.5},f);
+   for(const r of[RA,RB])E('circle',{cx,cy,r,fill:'none',stroke:'#cbd5e1','stroke-width':2,'stroke-dasharray':'6 7'},f);
+   const arm=E('line',{stroke:C.gray,'stroke-width':4},f);E('circle',{cx,cy,r:6,fill:C.ink},f);
+   const vA=arrow(f,'blue'),vB=arrow(f,'blue');
+   const bA=E('circle',{r:12,fill:'#fbbf24',stroke:'#b45309','stroke-width':3},f),bB=E('circle',{r:12,fill:'#fbbf24',stroke:'#b45309','stroke-width':3},f);
+   const lA=texG(f,'\\vec v_A',28,C.blue),lB=texG(f,'\\vec v_B',28,C.blue),nA=texG(f,'A',24,C.ink),nB=texG(f,'B',24,C.ink);
+   const upd=()=>{const w=+ws.value;$('#w5v').textContent=fx(w,1);
+     setTex($('#ro5a'),`\\(r_A=1\\ \\mathrm{m}:\\quad v_A=r_A\\omega=1\\times${fx(w,1)}=${fx(w,2)}\\ \\mathrm{m\\,s^{-1}}\\)`);
+     setTex($('#ro5b'),`\\(r_B=2\\ \\mathrm{m}:\\quad v_B=r_B\\omega=2\\times${fx(w,1)}=${fx(2*w,2)}\\ \\mathrm{m\\,s^{-1}}\\)`)};
+   ws.oninput=upd;upd();
+   anim(f,dt=>{const w=+ws.value;phi+=w*dt;const s=Math.sin(phi),c=Math.cos(phi),tx=-s,ty=-c;
+     ln(arm,cx,cy,cx+228*c,cy-228*s);
+     for(const [r,ar,b,l,n,v] of[[RA,vA,bA,lA,nA,w],[RB,vB,bB,lB,nB,2*w]]){const x=cx+r*c,y=cy-r*s,L=40*v;
+       ln(ar,x,y,x+tx*L,y+ty*L);setA(b,{cx:x,cy:y});at(l,x+tx*(L+28),y+ty*(L+28));at(n,x-tx*26,y-ty*26)}})}
+
+  /* Simulation */
+  {const f=$('#f9'),sim=makeOrbit(f,{cx:320,cy:300,R:165,w:2,showF:false});
+   const ms=$('#sm'),rs=$('#sr'),wsl=$('#sw');
+   const upd=()=>{const m=+ms.value,r=+rs.value,w=+wsl.value,v=r*w,a=r*w*w,F=m*a;
+     $('#smv').textContent=fx(m,1);$('#srv').textContent=r.toFixed(1);$('#swv').textContent=w.toFixed(1);
+     if(!sim.free){sim.R=r*110;sim.ring.setAttribute('r',sim.R)}sim.w=w;
+     sim.Lv=Math.min(210,36*v);sim.La=Math.min(sim.R-24,24+9*a);sim.LF=Math.min(sim.R-24,24+14*F);
+     setTex($('#s1'),`\\(v=r\\omega=${r.toFixed(1)}\\times${w.toFixed(1)}=${v.toFixed(2)}\\ \\mathrm{m\\,s^{-1}}\\)`);
+     setTex($('#s2'),`\\(a_c=r\\omega^2=${r.toFixed(1)}\\times${w.toFixed(1)}^2=${a.toFixed(2)}\\ \\mathrm{m\\,s^{-2}}\\)`);
+     setTex($('#s3'),`\\(F_c=ma_c=${fx(m,1)}\\times${a.toFixed(2)}=${F.toFixed(2)}\\ \\mathrm{N}\\)`);
+     setTex($('#s4'),`\\(T=\\dfrac{2\\pi}{\\omega}=${(2*Math.PI/w).toFixed(2)}\\ \\mathrm{s}\\)`)};
+   [ms,rs,wsl].forEach(s=>s.oninput=upd);
+   const ck=()=>{sim.showV=$('#cv').checked;sim.showA=$('#ca').checked;sim.showF=$('#cf').checked;sim.draw()};
+   ['#cv','#ca','#cf'].forEach(s=>$(s).onchange=ck);
+   $('#cut').onclick=()=>{if(sim.free)return;sim.free=true;sim.vx=sim.tx*sim.R*sim.w;sim.vy=sim.ty*sim.R*sim.w;
+     ln(sim.tan,sim.x-sim.tx*900,sim.y-sim.ty*900,sim.x+sim.tx*900,sim.y+sim.ty*900);vis(sim.tan,true)};
+   $('#reset').onclick=()=>{sim.free=false;vis(sim.tan,false);upd();sim.draw()};
+   $('#pause').onclick=()=>{sim.paused=!sim.paused;$('#pause').innerHTML=sim.paused?B('播放','Play'):B('暫停','Pause')};
+   upd();ck();anim(f,sim.step)}
+
+  /* Emphasis: vector clock */
+  {const f=$('#f10'),o=makeOrbit(f,{cx:250,cy:260,R:180,w:.9,Lv:105,La:90}),Ox=650,Oy=260,L=115;
+   E('circle',{cx:Ox,cy:Oy,r:L,fill:'none',stroke:'#cbd5e1','stroke-width':2,'stroke-dasharray':'6 7'},f);
+   const cv=arrow(f,'blue'),ca=arrow(f,'red');E('circle',{cx:Ox,cy:Oy,r:6,fill:C.ink},f);
+   const lv=texG(f,'\\vec v',30,C.blue),la=texG(f,'\\vec a_c',30,C.red);
+   anim(f,dt=>{o.step(dt);ln(cv,Ox,Oy,Ox+o.tx*L,Oy+o.ty*L);ln(ca,Ox,Oy,Ox+o.nx*L,Oy+o.ny*L);
+     at(lv,Ox+o.tx*(L+26),Oy+o.ty*(L+26));at(la,Ox+o.nx*(L+26),Oy+o.ny*(L+26))})}
+
+
+  /* Teapot, platform and lanes figures */
+  {const f=$('#fTea'),cx=210,cy=205,R=140,a=20*Math.PI/180,tx=cx+R*Math.cos(a),ty=cy-R*Math.sin(a),ux=-Math.sin(a),uy=-Math.cos(a);
+   E('circle',{cx,cy,r:R+18,fill:'#fff',stroke:'#94a3b8','stroke-width':3},f);E('circle',{cx,cy,r:6,fill:C.ink},f);
+   E('line',{x1:cx,y1:cy,x2:tx,y2:ty,stroke:C.gray,'stroke-width':2.5,'stroke-dasharray':'6 6'},f);
+   at(texG(f,'r',24,C.gray),cx+R*.5*Math.cos(a)-4,cy-R*.5*Math.sin(a)+20);
+   E('path',{d:`M${cx-30},${cy-R+12}A${R-12},${R-12} 0 0 0 ${cx-R+12},${cy+30}`,fill:'none',stroke:C.orange,'stroke-width':4,'marker-end':'url(#h-orange)'},f);
+   at(texG(f,'\\omega',26,C.orange),cx-R*.55,cy-R*.4);
+   E('line',{x1:tx,y1:ty,x2:tx+ux*400,y2:ty+uy*400,stroke:'#94a3b8','stroke-width':2,'stroke-dasharray':'5 7'},f);
+   ln(arrow(f,'blue'),tx,ty,tx+ux*105,ty+uy*105);at(texG(f,'u',26,C.blue),tx+ux*105+22,ty+uy*105+4);
+   E('rect',{x:tx-16,y:ty-12,width:32,height:24,rx:7,fill:'#ea580c'},f);
+   const bx=505,by=200;E('rect',{x:bx-85,y:by-110,width:170,height:220,rx:14,fill:'#fff',stroke:'#cbd5e1','stroke-width':2},f);
+   [['m=1\\ \\mathrm{kg}',C.ink],['r=0.30\\ \\mathrm{m}',C.gray],['f=0.5\\ \\mathrm{rev\\,s^{-1}}',C.orange],['F_{\\text{fric}}=10\\ \\mathrm{N}',C.purple],['s=\\ ?',C.ink]].forEach(([t,c],k)=>at(texG(f,t,22,c),bx,by-84+k*42))}
+  {const f=$('#fPQ'),cx=110,cy=85,R=70;
+   E('circle',{cx,cy,r:R,fill:'#fff',stroke:'#94a3b8','stroke-width':2.5},f);E('circle',{cx,cy,r:4,fill:C.ink},f);
+   E('line',{x1:cx,y1:cy,x2:cx+R,y2:cy,stroke:C.gray,'stroke-width':2,'stroke-dasharray':'4 5'},f);
+   E('circle',{cx:cx+R/2,cy,r:7,fill:'#fbbf24',stroke:'#b45309','stroke-width':2},f);E('circle',{cx:cx+R-6,cy,r:7,fill:'#fbbf24',stroke:'#b45309','stroke-width':2},f);
+   at(texG(f,'O',20,C.ink),cx-12,cy-14);at(texG(f,'Q',20,C.ink),cx+R/2,cy-18);at(texG(f,'P',20,C.ink),cx+R-6,cy-18);
+   at(texG(f,'\\tfrac{r}{2}',18,C.gray),cx+R/4,cy+18);at(texG(f,'r',18,C.gray),cx+R*.75,cy+22);
+   E('path',{d:`M${cx-R-12},${cy+20}A${R+12},${R+12} 0 0 0 ${cx-20},${cy+R+10}`,fill:'none',stroke:C.orange,'stroke-width':3,'marker-end':'url(#h-orange)'},f);
+   at(texG(f,'\\omega',22,C.orange),cx-R-4,cy+R-4);
+   at(texG(f,'a_c=r\\omega^2',22,C.red),250,cy)}
+  {const f=$('#fLane'),cx=160,cy=162;
+   for(const [r,c] of [[88,'#94a3b8'],[124,'#cbd5e1']])E('path',{d:`M${cx-r},${cy}A${r},${r} 0 0 1 ${cx+r},${cy}`,fill:'none',stroke:c,'stroke-width':22},f);
+   E('circle',{cx,cy,r:4,fill:C.ink},f);
+   E('line',{x1:cx,y1:cy,x2:cx+88*Math.cos(.9),y2:cy-88*Math.sin(.9),stroke:C.gray,'stroke-width':2,'stroke-dasharray':'4 5'},f);
+   at(texG(f,'45\\,\\mathrm{m}',18,C.gray),cx+56,cy-30);
+   E('rect',{x:cx-14,y:cy-97,width:28,height:18,rx:4,fill:C.blue},f);
+   at(texG(f,'1',18,C.ink),cx-88,cy-22);at(texG(f,'2',18,C.ink),cx-124,cy-22);
+   ln(arrow(f,'purple',4),cx,cy-76,cx,cy-42);at(texG(f,'f',20,C.purple),cx+14,cy-58)}
+  drawRad();$('#th').oninput=drawRad;
+  $$('[data-deg]').forEach(b=>b.onclick=()=>{$('#th').value=b.dataset.deg;drawRad()});
+  conv();$('#dIn').oninput=conv;$('#rIn').oninput=conv;$('#nIn').oninput=conv;
+  drawDv();$('#dth').oninput=drawDv;
+  renderQ();
+  requestAnimationFrame(t=>{last=t;loop(t)});
+}
+window.__start=start;
+if(window.MathJax&&MathJax.startup&&MathJax.startup.document)MathJax.startup.promise.then(start);
+setTimeout(start,8000);
+}
+</script>
+</body>
+</html>
